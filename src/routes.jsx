@@ -14,10 +14,10 @@ const router = createBrowserRouter([
     element: <CuratorDashboard />,
     children: [
       {
-        path: "studentslist",
+        path: "students-list",
         element: <StudentsListPage />,
       },
-      { path: "menulist", element: <MenuListPage /> },
+      { path: "menu-list", element: <MenuListPage /> },
     ],
   },
   { path: "/student", element: <StudentDashboard /> },

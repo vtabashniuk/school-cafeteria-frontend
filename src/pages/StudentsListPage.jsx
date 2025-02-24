@@ -1,47 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, updateUser, setPassword } from "../redux/userSlice";
+import { fetchUsers, updateUser } from "../redux/userSlice";
+import useUserFormAction from "../hooks/useUserFormAction";
+import BalanceForm from "../components/BalanceForm";
+import UserForm from "../components/UserForm";
+import UsersList from "../components/UsersList";
 import { Button, CircularProgress, Alert, TextField } from "@mui/material";
-// import StudentsList from "../components/StudentsList";
-// import StudentForm from "../components/StudentForm";
 
 const StudentsListPage = () => {
   const dispatch = useDispatch();
-  const students = useSelector((state) => state.user.list || []);
+  const {
+    handleEdit,
+    handleUserFormSubmit,
+    openUserForm,
+    setOpenUserForm,
+    selectedUser,
+    setSelectedUser
+  } = useUserFormAction();
+  const users = useSelector((state) => state.user.list || []);
   const loading = useSelector((state) => state.user.loading || false);
   const error = useSelector((state) => state.user.error || null);
 
   const [filter, setFilter] = useState("");
-  const [open, setOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  const handleEdit = (student) => {
-    setSelectedStudent(student);
-    setOpen(true);
-  };
-
-  const handleStatusChange = (studentId, currentStatus) => {
-    dispatch(
-      updateUser({ id: studentId, updatedData: { isActive: !currentStatus } })
-    );
-  };
-
-  const handleSetPassword = (studentId) => {
-    const newPassword = prompt("Введіть новий пароль:");
-    if (newPassword) {
-      dispatch(setPassword({ id: studentId, password: newPassword }));
-    }
+  const handleOpenBalanceDialog = (student) => {
+    setSelectedUser(student);
+    setBalanceDialogOpen(true);
   };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
 
-  const filteredStudents = students.filter(
+  const filteredUsers = users.filter(
     (student) =>
       student.role === "student" &&
       student.lastName?.toLowerCase().includes(filter.toLowerCase())
@@ -50,6 +46,13 @@ const StudentsListPage = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h2>Список учнів</h2>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setOpenUserForm(true)}
+      >
+        Додати учня
+      </Button>
       <TextField
         label="Пошук за прізвищем"
         variant="outlined"
@@ -58,17 +61,24 @@ const StudentsListPage = () => {
         fullWidth
         margin="normal"
       />
-      <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
-        Додати учня
-      </Button>
-
-      {/* <StudentForm
-        open={open}
+      <UserForm
+        open={openUserForm}
         onClose={() => {
-          setOpen(false);
-          setSelectedStudent(null);
+          setOpenUserForm(false);
+          setSelectedUser(null);
         }}
-        initialData={selectedStudent}
+        onSubmit={handleUserFormSubmit}
+        userRole={"student"}
+        initialData={selectedUser}
+      />
+
+      <BalanceForm
+        open={balanceDialogOpen}
+        onClose={() => setBalanceDialogOpen(false)}
+        student={selectedUser}
+        onUpdateBalance={(id, newBalance) =>
+          dispatch(updateUser({ id, updatedData: { balance: newBalance } }))
+        }
       />
 
       {loading ? (
@@ -76,13 +86,12 @@ const StudentsListPage = () => {
       ) : error ? (
         <Alert severity="error">{error}</Alert>
       ) : (
-        <StudentsList
-          students={filteredStudents}
+        <UsersList
+          users={filteredUsers}
           onEdit={handleEdit}
-          onStatusChange={handleStatusChange}
-          onSetPassword={handleSetPassword}
+          onUpdateBalance={handleOpenBalanceDialog}
         />
-      )} */}
+      )}
     </div>
   );
 };

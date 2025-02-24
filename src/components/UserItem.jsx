@@ -1,22 +1,35 @@
 import React from "react";
+import useUserAction from "../hooks/useUserAction";
 import { TableRow, TableCell, Switch, Button } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
+import CurrencyExchangeOutlinedIcon from "@mui/icons-material/CurrencyExchangeOutlined";
 
-const UserItem = ({ user, onStatusChange, onEdit, onSetPassword }) => {
+const UserItem = ({ user, onEdit, onUpdateBalance }) => {
+  const { handleSetPassword, handleStatusChange } = useUserAction();
+
   return (
     <TableRow key={user._id}>
       <TableCell>{user.lastName}</TableCell>
+      <TableCell>{user.firstName}</TableCell>
+      <TableCell>{user.balance}</TableCell>
       <TableCell>{user.login}</TableCell>
       <TableCell>{user.role}</TableCell>
       <TableCell>
         <Switch
           checked={user.isActive}
-          onChange={() => onStatusChange(user._id, user.isActive)}
+          onChange={() => handleStatusChange(user._id, user.isActive)}
           color="primary"
         />
       </TableCell>
       <TableCell>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => onUpdateBalance(user._id)} // ще не додано в хук
+        >
+          <CurrencyExchangeOutlinedIcon />
+        </Button>
         <Button
           variant="contained"
           color="primary"
@@ -27,7 +40,7 @@ const UserItem = ({ user, onStatusChange, onEdit, onSetPassword }) => {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => onSetPassword(user._id)}
+          onClick={() => handleSetPassword(user._id)}
         >
           <LockResetOutlinedIcon />
         </Button>

@@ -9,13 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 
-const UserForm = ({ open, onClose, onSubmit, initialData }) => {
+const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
   const [formData, setFormData] = useState({
     lastName: "",
     firstName: "",
     login: "",
     password: "",
-    role: "curator",
+    role: userRole,
     group: "",
     balance: 0,
   });
@@ -30,13 +30,13 @@ const UserForm = ({ open, onClose, onSubmit, initialData }) => {
         firstName: "",
         login: "",
         password: "",
-        role: "curator",
+        role: userRole,
         group: "",
         balance: 0,
       });
     }
     setError(""); // Очищаємо помилку при відкритті
-  }, [initialData, open]); // <-- Додано `open`, щоб очищати поля при відкритті форми
+  }, [initialData, open, userRole]); // <-- Додано `open`, щоб очищати поля при відкритті форми
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,6 +61,8 @@ const UserForm = ({ open, onClose, onSubmit, initialData }) => {
     }
 
     if (!formData.password) delete updatedData.password; // Видаляємо поле, якщо воно пусте
+
+    updatedData.balance = Number(formData.balance);
 
     try {
       const errorMessage = await onSubmit(updatedData); // Отримуємо можливу помилку

@@ -8,12 +8,18 @@ import {
   TableBody,
 } from "@mui/material";
 
-const UsersList = ({ users, onStatusChange, onEdit, onSetPassword }) => {
+const UsersList = ({
+  users,
+  onEdit,
+  onUpdateBalance,
+}) => {
   return (
     <Table stickyHeader>
       <TableHead>
         <TableRow>
           <TableCell>Прізвище</TableCell>
+          <TableCell>Ім'я</TableCell>
+          <TableCell>Баланс</TableCell>
           <TableCell>Логін</TableCell>
           <TableCell>Роль</TableCell>
           <TableCell>Активний</TableCell>
@@ -26,9 +32,8 @@ const UsersList = ({ users, onStatusChange, onEdit, onSetPassword }) => {
             <UserItem
               key={user._id}
               user={user}
-              onStatusChange={onStatusChange}
               onEdit={onEdit}
-              onSetPassword={onSetPassword}
+              onUpdateBalance={onUpdateBalance}
             />
           ))
         ) : (
