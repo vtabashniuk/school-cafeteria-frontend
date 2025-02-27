@@ -31,6 +31,23 @@ export const addUser = createAsyncThunk(
   }
 );
 
+//оновлення балансу
+export const updateBalance = createAsyncThunk(
+  "user/updateBalance",
+  async ({ id, newBalance }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(`/users/${id}/updatebalance`, {
+        newBalance,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Помилка оновлення балансу"
+      );
+    }
+  }
+);
+
 // Редагування користувача
 export const updateUser = createAsyncThunk(
   "users/updateUser",
@@ -51,11 +68,14 @@ export const setPassword = createAsyncThunk(
   "users/setPassword",
   async ({ id, password }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/users/${id}/setpassword`, { newPassword: password });
+      const response = await api.put(`/users/${id}/setpassword`, {
+        newPassword: password,
+      });
+      alert(response.data.message);
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data || "Помилка встановлення пароля"
+        error.response?.data?.message || "Помилка встановлення пароля"
       );
     }
   }
@@ -136,6 +156,17 @@ const userSlice = createSlice({
         }
       })
       .addCase(setPassword.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(updateBalance.fulfilled, (state, action) => {
+        const index = state.list.findIndex(
+          (user) => user._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.list[index] = { ...state.list[index], ...action.payload };
+        }
+      })
+      .addCase(updateBalance.rejected, (state, action) => {
         state.error = action.payload;
       })
       .addCase(deleteUser.fulfilled, (state, action) => {

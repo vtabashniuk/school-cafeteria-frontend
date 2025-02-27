@@ -26,7 +26,7 @@ const UserItem = ({ user, onEdit, onUpdateBalance }) => {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => onUpdateBalance(user._id)} // ще не додано в хук
+          onClick={() => onUpdateBalance(user)} // ще не додано в хук
         >
           <CurrencyExchangeOutlinedIcon />
         </Button>

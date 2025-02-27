@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, updateUser } from "../redux/userSlice";
+import { fetchUsers } from "../redux/userSlice";
+import useStudentBalanceAction from "../hooks/useUserBalanceAction";
 import useUserFormAction from "../hooks/useUserFormAction";
 import BalanceForm from "../components/BalanceForm";
 import UserForm from "../components/UserForm";
@@ -10,28 +11,30 @@ import { Button, CircularProgress, Alert, TextField } from "@mui/material";
 const StudentsListPage = () => {
   const dispatch = useDispatch();
   const {
+    handleOpenBalanceDialog,
+    handleUpdateBalance,
+    openBalanceDialog,
+    setOpenBalanceDialog,
+    selectedStudent,
+    setSelectedStudent,
+  } = useStudentBalanceAction();
+  const {
     handleEdit,
     handleUserFormSubmit,
     openUserForm,
     setOpenUserForm,
     selectedUser,
-    setSelectedUser
+    setSelectedUser,
   } = useUserFormAction();
   const users = useSelector((state) => state.user.list || []);
   const loading = useSelector((state) => state.user.loading || false);
   const error = useSelector((state) => state.user.error || null);
 
   const [filter, setFilter] = useState("");
-  const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
-
-  const handleOpenBalanceDialog = (student) => {
-    setSelectedUser(student);
-    setBalanceDialogOpen(true);
-  };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
@@ -73,12 +76,13 @@ const StudentsListPage = () => {
       />
 
       <BalanceForm
-        open={balanceDialogOpen}
-        onClose={() => setBalanceDialogOpen(false)}
-        student={selectedUser}
-        onUpdateBalance={(id, newBalance) =>
-          dispatch(updateUser({ id, updatedData: { balance: newBalance } }))
-        }
+        open={openBalanceDialog}
+        onClose={() => {
+          setOpenBalanceDialog(false);
+          setSelectedStudent(null);
+        }}
+        student={selectedStudent}
+        onUpdateBalance={handleUpdateBalance}
       />
 
       {loading ? (

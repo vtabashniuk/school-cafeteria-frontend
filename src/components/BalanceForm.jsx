@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,17 +11,23 @@ import {
 const BalanceForm = ({ open, onClose, student, onUpdateBalance }) => {
   const [balanceInput, setBalanceInput] = useState("");
 
+useEffect(() => {
+  if (!open) {
+    setBalanceInput(""); // Очищення після закриття
+  }
+}, [open]);
+
   const handleChangeBalance = () => {
     const newBalance = parseFloat(balanceInput);
     if (isNaN(newBalance)) return;
 
-    const updatedBalance = student.balance + newBalance;
-    if (updatedBalance < -200) {
-      alert("Баланс не може бути менше -200.");
+    if (student.balance + newBalance < 0) {
+      alert("Баланс не може бути менше 0.");
       return;
     }
+    const updatedBalance = student.balance + newBalance;
 
-    onUpdateBalance(student.id, updatedBalance);
+    onUpdateBalance(student._id, updatedBalance);
     onClose();
   };
 
