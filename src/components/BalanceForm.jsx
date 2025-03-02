@@ -40,7 +40,6 @@ const BalanceForm = ({ open, onClose, student, onUpdateBalance }) => {
     } catch (error) {
       setError(error?.message || "Помилка оновлення балансу");
     }
-
     onClose();
   };
 

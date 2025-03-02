@@ -81,6 +81,25 @@ export const setPassword = createAsyncThunk(
   }
 );
 
+// Зміна пароля
+export const changePassword = createAsyncThunk(
+  "users/changePassword",
+  async ({ oldPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await api.put("/users/changepassword", {
+        oldPassword,
+        newPassword,
+      });
+      console.log(response)
+      return response?.data?.message;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Помилка зміни пароля"
+      );
+    }
+  }
+);
+
 // Видалення користувача
 export const deleteUser = createAsyncThunk(
   "users/deleteUser",
@@ -145,6 +164,12 @@ const userSlice = createSlice({
         if (index !== -1) state.list[index] = action.payload;
       })
       .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.error = null;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
         state.error = action.payload;
       })
       .addCase(setPassword.fulfilled, (state, action) => {
