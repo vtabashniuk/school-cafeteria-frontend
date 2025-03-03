@@ -8,13 +8,18 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const ChangePasswordForm = ({ open, onClose, user, onChangePassword }) => {
+const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -24,6 +29,11 @@ const ChangePasswordForm = ({ open, onClose, user, onChangePassword }) => {
       setError("");
     }
   }, [open]);
+
+  const handleClickShowOldPassword = () => setShowOldPassword(!showOldPassword);
+  const handleClickShowNewPassword = () => setShowNewPassword(!showNewPassword);
+  const handleMouseDownPassword = (e) => e.preventDefault();
+  const handleMouseUpPassword = (e) => e.preventDefault();
 
   const handleChangePassword = async () => {
     setIsLoading(true);
@@ -36,6 +46,8 @@ const ChangePasswordForm = ({ open, onClose, user, onChangePassword }) => {
         return;
       }
       setError("");
+      setShowOldPassword(false);
+      setShowNewPassword(false);
       onClose();
     } catch (error) {
       setError(error?.message || "Помилка зміни пароля");
@@ -50,21 +62,59 @@ const ChangePasswordForm = ({ open, onClose, user, onChangePassword }) => {
         {error && <Typography color="error">{error}</Typography>}
         <TextField
           label="Cтарий пароль"
-          type="password"
+          type={showOldPassword ? "text" : "password"}
           fullWidth
           margin="normal"
           value={oldPassword}
           onChange={(e) => setOldPassword(e.target.value)}
           disabled={isLoading}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showOldPassword ? "приховати пароль" : "показати пароль"
+                    }
+                    onClick={handleClickShowOldPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
         <TextField
           label="Новий пароль"
-          type="password"
+          type={showNewPassword ? "text" : "password"}
           fullWidth
           margin="normal"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           disabled={isLoading}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showNewPassword ? "приховати пароль" : "показати пароль"
+                    }
+                    onClick={handleClickShowNewPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       </DialogContent>
       <DialogActions>
@@ -76,7 +126,11 @@ const ChangePasswordForm = ({ open, onClose, user, onChangePassword }) => {
           color="primary"
           variant="contained"
         >
-          {isLoading ? <CircularProgress size={24} /> : "Змінити пароль"}
+          {isLoading ? (
+            <CircularProgress color="white" size={24} />
+          ) : (
+            "Змінити пароль"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

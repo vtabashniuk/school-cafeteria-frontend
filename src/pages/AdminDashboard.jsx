@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchUsers, resetLoading, clearError } from "../redux/userSlice";
 import useStudentBalanceAction from "../hooks/useUserBalanceAction";
 import useUserFormAction from "../hooks/useUserFormAction";
+import { logout } from "../utils/logout";
 import BalanceForm from "../components/BalanceForm";
 import SearchField from "../components/SearchField";
 import UserForm from "../components/UserForm";
@@ -38,11 +39,6 @@ const AdminDashboard = () => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
@@ -54,7 +50,11 @@ const AdminDashboard = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h2>Адмін Панель</h2>
-      <Button variant="contained" color="secondary" onClick={handleLogout}>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => logout(navigate)}
+      >
         Вийти
       </Button>
       <Button
