@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import useUserChangePasswordAction from "../hooks/useUserChangePasswordAction";
-import { logout } from "../utils/logout";
+import { logout } from "../utils";
 import { Button } from "@mui/material";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import useAutoLogout from "../hooks/useAutoLogout";

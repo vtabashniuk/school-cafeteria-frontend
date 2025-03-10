@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../redux/userSlice";
-import useStudentBalanceAction from "../hooks/useUserBalanceAction";
+import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
 import useUserFormAction from "../hooks/useUserFormAction";
 import BalanceForm from "../components/BalanceForm";
 import UserForm from "../components/UserForm";
