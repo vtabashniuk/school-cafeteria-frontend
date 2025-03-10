@@ -22,6 +22,7 @@ const UsersList = ({
           <TableCell>Баланс</TableCell>
           <TableCell>Логін</TableCell>
           <TableCell>Роль</TableCell>
+          <TableCell>Пільговик</TableCell>
           <TableCell>Активний</TableCell>
           <TableCell>Дії</TableCell>
         </TableRow>

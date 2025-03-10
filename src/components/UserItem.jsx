@@ -1,6 +1,6 @@
 import React from "react";
 import useUserAction from "../hooks/useUserAction";
-import { TableRow, TableCell, Switch, Button } from "@mui/material";
+import { TableRow, TableCell, Switch, Button, Checkbox } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 import CurrencyExchangeOutlinedIcon from "@mui/icons-material/CurrencyExchangeOutlined";
@@ -15,6 +15,9 @@ const UserItem = ({ user, onEdit, onUpdateBalance }) => {
       <TableCell>{user.balance}</TableCell>
       <TableCell>{user.login}</TableCell>
       <TableCell>{user.role}</TableCell>
+      <TableCell>
+        <Checkbox checked={user.isBeneficiaries} disabled />
+      </TableCell>
       <TableCell>
         <Switch
           checked={user.isActive}

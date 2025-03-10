@@ -7,6 +7,8 @@ import {
   TextField,
   Button,
   Typography,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 
 const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
@@ -18,6 +20,7 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
     role: userRole,
     group: "",
     balance: 0,
+    isBeneficiaries: false,
   });
   const [error, setError] = useState("");
 
@@ -33,14 +36,21 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
         role: userRole,
         group: "",
         balance: 0,
+        isBeneficiaries: false,
       });
     }
     setError(""); // Очищаємо помилку при відкритті
   }, [initialData, open, userRole]); // <-- Додано `open`, щоб очищати поля при відкритті форми
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+
+    // Якщо це Checkbox, оновлюємо значення через checked
+    if (type === "checkbox") {
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async () => {
@@ -144,6 +154,17 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
           fullWidth
           value={formData.balance}
           onChange={handleChange}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="isBeneficiaries"
+              checked={formData.isBeneficiaries}
+              onChange={handleChange}
+            />
+          }
+          label="Пільговик"
+          labelPlacement="start"
         />
       </DialogContent>
       <DialogActions>
