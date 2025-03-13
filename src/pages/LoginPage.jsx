@@ -13,17 +13,17 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useTheme } from "@mui/material/styles";
 import { buttonStyles } from "../styles/button/button";
 
 const LoginPage = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
-  const { loginUser, error, loading } = useAuth(); // Використовуємо хук для логіки авторизації
+  const { loginUser, error, loading } = useAuth();
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginFocused, setLoginFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (e) => e.preventDefault();
@@ -31,8 +31,8 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const redirectPath = await loginUser(login, password); // Викликаємо хук для логіки авторизації
-    navigate(redirectPath); // Перенаправляємо на відповідну сторінку
+    const redirectPath = await loginUser(login, password);
+    navigate(redirectPath);
   };
 
   return (
@@ -51,7 +51,26 @@ const LoginPage = () => {
           label="Логін"
           variant="outlined"
           value={login}
+          onBlur={() => setLoginFocused(false)} // Установлюємо фокус в false
           onChange={(e) => setLogin(e.target.value)}
+          onFocus={() => setLoginFocused(true)} // Установлюємо фокус в true
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: loginFocused
+                  ? "textFieldOutline.primary"
+                  : "textFieldOutline.secondary", // Зміна кольору outline
+              },
+              "&:hover fieldset": {
+                borderColor: loginFocused
+                  ? "textFieldOutline.primary"
+                  : "textFieldOutline.primary", // Колір при ховері
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "textFieldOutline.primary", // Колір при фокусі
+              },
+            },
+          }}
         />
         <TextField
           autoComplete="off"
@@ -61,7 +80,9 @@ const LoginPage = () => {
           type={showPassword ? "text" : "password"}
           variant="outlined"
           value={password}
+          onBlur={() => setPasswordFocused(false)} // Установлюємо фокус в false
           onChange={(e) => setPassword(e.target.value)}
+          onFocus={() => setPasswordFocused(true)} // Установлюємо фокус в true
           slotProps={{
             input: {
               endAdornment: (
@@ -70,6 +91,11 @@ const LoginPage = () => {
                     aria-label={
                       showPassword ? "приховати пароль" : "показати пароль"
                     }
+                    sx={{
+                      color: passwordFocused
+                        ? "textFieldOutline.primary"
+                        : "extFieldOutline.secondary", // Змінюємо колір в залежності від фокусу
+                    }}
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
                     onMouseUp={handleMouseUpPassword}
@@ -81,6 +107,23 @@ const LoginPage = () => {
               ),
             },
           }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: passwordFocused
+                  ? "textFieldOutline.primary"
+                  : "textFieldOutline.secondary", // Зміна кольору обводки
+              },
+              "&:hover fieldset": {
+                borderColor: passwordFocused
+                  ? "textFieldOutline.primary"
+                  : "textFieldOutline.primary", // Колір при ховері
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "textFieldOutline.primary", // Колір при фокусі
+              },
+            },
+          }}
         />
         <Button
           variant="contained"
@@ -90,10 +133,7 @@ const LoginPage = () => {
           disabled={loading} // Блокуємо кнопку під час завантаження
         >
           {loading ? (
-            <CircularProgress
-              size={24}
-              sx={{ color: theme.palette.spinner.main }}
-            />
+            <CircularProgress size={24} sx={{ color: "spinner.main" }} />
           ) : (
             "Увійти"
           )}

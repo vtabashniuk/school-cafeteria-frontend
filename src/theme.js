@@ -17,21 +17,25 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#6190E8", // Основний колір
+      main: "#6190e8", // Основний колір
     },
     secondary: {
-      main: "#9c27b0", // Додатковий колір
+      main: "#212121", // Додатковий колір
     },
     background: {
-      default: "#ECE9E6", // Колір фону
+      default: "#ece9e6", // Колір фону
     },
     spinner: {
-      main: "#ECE9E6", // Визначаємо колір для спінера
+      main: "#ece9e6", // Визначаємо колір для спінера
     },
     text: {
       primary: "#212121", // Колір основного тексту
       secondary: "#757575", // Колір для вторинного тексту
       disabled: "#bdbdbd", // Колір для вимкненого тексту
+    },
+    textFieldOutline: {
+      primary: "#6190e8",
+      secondary: "#cccccc",
     },
   },
   components: {
@@ -40,7 +44,7 @@ const theme = createTheme({
       styleOverrides: {
         body: {
           // Додаємо градієнт фону для всього сайту
-          background: "linear-gradient(to right, #ECE9E6, #FFFFFF)",
+          background: "linear-gradient(to right, #ece9e6, #ffffff)",
           minHeight: "100vh", // Щоб фон охоплював всю висоту сторінки
         },
       },
