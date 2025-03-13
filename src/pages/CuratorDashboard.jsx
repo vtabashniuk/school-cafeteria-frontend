@@ -1,7 +1,5 @@
-import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import useUserChangePasswordAction from "../hooks/useUserChangePasswordAction";
-import { logout } from "../utils";
 import { Button } from "@mui/material";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import useAutoLogout from "../hooks/useAutoLogout";
@@ -19,20 +17,6 @@ const CuratorDashboard = () => {
   return (
     <>
       <h2>Куратор Панель</h2>
-      <p>Сьогодні: {new Date().toLocaleDateString()}</p>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => logout(navigate)}
-      >
-        Вийти
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => setOpenChangePasswordForm(true)}
-      >
-        Змінити пароль
-      </Button>
       <Button variant="contained" onClick={() => navigate("students-list")}>
         Учні
       </Button>

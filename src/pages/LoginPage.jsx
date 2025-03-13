@@ -1,62 +1,49 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "../redux/authSlice";
-import api from "../services/api";
+import useAuth from "../hooks/useAuth";
 import {
-  Container,
-  TextField,
-  Button,
-  Typography,
+  Alert,
   Box,
-  InputAdornment,
+  Button,
+  CircularProgress,
+  Container,
   IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
+import { buttonStyles } from "../styles/button/button";
 
 const LoginPage = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const { loginUser, error, loading } = useAuth(); // Використовуємо хук для логіки авторизації
+
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (e) => e.preventDefault();
   const handleMouseUpPassword = (e) => e.preventDefault();
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    try {
-      const response = await api.post("/auth/login", { login, password });
-      dispatch(setUser(response.data));
-
-      switch (response.data.user.role) {
-        case "admin":
-          navigate("/admin");
-          break;
-        case "curator":
-          navigate("/curator");
-          break;
-        case "student":
-          navigate("/student");
-          break;
-        default:
-          navigate("/");
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Помилка авторизації");
-    }
+    const redirectPath = await loginUser(login, password); // Викликаємо хук для логіки авторизації
+    navigate(redirectPath); // Перенаправляємо на відповідну сторінку
   };
 
   return (
     <Container maxWidth="xs">
       <Box sx={{ mt: 10, textAlign: "center" }}>
         <Typography variant="h5">Вхід</Typography>
-        {error && <Typography color="error">{error}</Typography>}
+        {error && (
+          <Alert variant="outlined" severity="error">
+            {error}
+          </Alert>
+        )}
         <TextField
           autoComplete="off"
           fullWidth
@@ -97,11 +84,19 @@ const LoginPage = () => {
         />
         <Button
           variant="contained"
-          color="primary"
           fullWidth
+          sx={buttonStyles.gradientPrimary}
           onClick={handleSubmit}
+          disabled={loading} // Блокуємо кнопку під час завантаження
         >
-          Увійти
+          {loading ? (
+            <CircularProgress
+              size={24}
+              sx={{ color: theme.palette.spinner.main }}
+            />
+          ) : (
+            "Увійти"
+          )}
         </Button>
       </Box>
     </Container>

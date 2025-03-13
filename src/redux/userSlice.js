@@ -90,7 +90,6 @@ export const changePassword = createAsyncThunk(
         oldPassword,
         newPassword,
       });
-      console.log(response)
       return response?.data?.message;
     } catch (error) {
       return rejectWithValue(

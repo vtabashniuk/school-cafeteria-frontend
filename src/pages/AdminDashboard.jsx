@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { fetchUsers, resetLoading, clearError } from "../redux/userSlice";
 import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
 import useUserFormAction from "../hooks/useUserFormAction";
-import { logout } from "../utils";
 import BalanceForm from "../components/BalanceForm";
 import SearchField from "../components/SearchField";
 import UserForm from "../components/UserForm";
@@ -14,7 +12,6 @@ import PersonAddTwoToneIcon from "@mui/icons-material/PersonAddTwoTone";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const {
     handleOpenBalanceDialog,
     handleUpdateBalance,
@@ -50,13 +47,6 @@ const AdminDashboard = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h2>Адмін Панель</h2>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => logout(navigate)}
-      >
-        Вийти
-      </Button>
       <Button
         variant="contained"
         color="primary"

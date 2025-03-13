@@ -1,5 +1,5 @@
 import React from "react";
-import MenuItem from "./Menu/MenuItem";
+import MenuItem from "./MenuItem";
 import {
   Table,
   TableHead,
@@ -8,7 +8,7 @@ import {
   TableBody,
 } from "@mui/material";
 
-const MenuList = ({ dishes, onEdit, onDishUpdate }) => {
+const MenuList = ({ dishes, onDishUpdate }) => {
   return (
     <>
       <Table stickyHeader>
