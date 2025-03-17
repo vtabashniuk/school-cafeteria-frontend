@@ -1,6 +1,6 @@
 import { Typography, Box } from "@mui/material";
 
-const DateComponent = () => {
+export const DateComponent = () => {
 
   return (
     <Box
@@ -31,5 +31,3 @@ const DateComponent = () => {
     </Box>
   );
 };
-
-export default DateComponent;

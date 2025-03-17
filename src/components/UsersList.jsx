@@ -8,22 +8,25 @@ import {
   TableBody,
 } from "@mui/material";
 
-const UsersList = ({
-  users,
-  onEdit,
-  onUpdateBalance,
-}) => {
+const UsersList = ({ users, onEdit, onUpdateBalance }) => {
   return (
     <Table stickyHeader>
       <TableHead>
-        <TableRow>
-          <TableCell>Прізвище</TableCell>
-          <TableCell>Ім'я</TableCell>
+        <TableRow sx={{ fontSize: "1rem", fontWeight: 500 }}>
+          <TableCell>Прізвище Ім'я</TableCell>
           <TableCell>Баланс</TableCell>
-          <TableCell>Логін</TableCell>
-          <TableCell>Роль</TableCell>
-          <TableCell>Пільговик</TableCell>
-          <TableCell>Активний</TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
+            Логін
+          </TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
+            Роль
+          </TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
+            Пільговик
+          </TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
+            Активний
+          </TableCell>
           <TableCell>Дії</TableCell>
         </TableRow>
       </TableHead>
@@ -39,7 +42,7 @@ const UsersList = ({
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={5} align="center">
+            <TableCell colSpan={3} align="center">
               Немає користувачів
             </TableCell>
           </TableRow>

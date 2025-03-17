@@ -7,10 +7,25 @@ export const fetchUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get("/users");
-      return response.data;
+      return response?.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data || "Не вдалося отримати користувачів"
+        error?.message || "Не вдалося отримати користувачів"
+      );
+    }
+  }
+);
+
+//Отримання даних поточного користувача
+export const getMe = createAsyncThunk(
+  "users/getMe",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/auth/me");
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.message || "Помилка при отриманні даних користувача"
       );
     }
   }
@@ -115,6 +130,7 @@ export const deleteUser = createAsyncThunk(
 );
 
 const initialState = {
+  currentUser: null,
   list: [],
   loading: false,
   error: null,
@@ -133,6 +149,18 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getMe.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMe.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentUser = action.payload; // зберігаємо дані користувача
+      })
+      .addCase(getMe.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload; // зберігаємо повідомлення про помилку
+      })
       .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
         state.error = null;

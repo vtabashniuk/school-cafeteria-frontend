@@ -26,7 +26,8 @@ const theme = createTheme({
       default: "#ece9e6", // Колір фону
     },
     spinner: {
-      main: "#ece9e6", // Визначаємо колір для спінера
+      primary: "6190e8",
+      secondary: "#ece9e6", // Визначаємо колір для спінера
     },
     text: {
       primary: "#212121", // Колір основного тексту
@@ -39,6 +40,29 @@ const theme = createTheme({
     },
   },
   components: {
+    // Задаємо стилі для MuiTextField
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            "&:hover fieldset": {
+              borderColor: "primary.main", // Використовуємо колір з палітри (наприклад, primary.main)
+            },
+          },
+        },
+      },
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          "& .MuiTableRow-root": {
+            "& .MuiTableCell-root": {
+              textAlign: "center", // Вирівнюємо текст по центру
+            },
+          },
+        },
+      },
+    },
     // Ви можете налаштувати компонент для фонового градієнта
     MuiCssBaseline: {
       styleOverrides: {

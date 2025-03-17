@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../redux/userSlice";
 import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
+import useUserFilter from "../hooks/useUserFilter";
 import useUserFormAction from "../hooks/useUserFormAction";
 import BalanceForm from "../components/BalanceForm";
 import UserForm from "../components/UserForm";
 import UsersList from "../components/UsersList";
-import { Button, CircularProgress, Alert, TextField } from "@mui/material";
+import { UserFilter } from "../components/common";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 
 const StudentsListPage = () => {
   const dispatch = useDispatch();
@@ -26,19 +33,18 @@ const StudentsListPage = () => {
     selectedUser,
     setSelectedUser,
   } = useUserFormAction();
+  const { filter, handleFilterChange } = useUserFilter();
+
   const users = useSelector((state) => state.user.list || []);
   const loading = useSelector((state) => state.user.loading || false);
-  const error = useSelector((state) => state.user.error || null);
-
-  const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
-
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
+    const fetchData = async () => {
+      dispatch(fetchUsers());
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filteredUsers = users.filter(
     (student) =>
@@ -47,22 +53,50 @@ const StudentsListPage = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Список учнів</h2>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenUserForm(true)}
+    <Box sx={{ padding: 2 }}>
+      <UserFilter filter={filter} onChange={handleFilterChange} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          paddingBottom: 2,
+          paddingTop: 2,
+        }}
       >
-        Додати учня
-      </Button>
-      <TextField
-        label="Пошук за прізвищем"
-        variant="outlined"
-        value={filter}
-        onChange={handleFilterChange}
-        fullWidth
-        margin="normal"
+        <Typography
+          variant="h5"
+          sx={{
+            fontSize: "1.5rem",
+          }}
+        >
+          Список учнів
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenUserForm(true)}
+        >
+          Додати учня
+        </Button>
+      </Box>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <UsersList
+          users={filteredUsers}
+          onEdit={handleEdit}
+          onUpdateBalance={handleOpenBalanceDialog}
+        />
+      )}
+      <BalanceForm
+        open={openBalanceDialog}
+        onClose={() => {
+          setOpenBalanceDialog(false);
+          setSelectedStudent(null);
+        }}
+        student={selectedStudent}
+        onUpdateBalance={handleUpdateBalance}
       />
       <UserForm
         open={openUserForm}
@@ -74,29 +108,7 @@ const StudentsListPage = () => {
         userRole={"student"}
         initialData={selectedUser}
       />
-
-      <BalanceForm
-        open={openBalanceDialog}
-        onClose={() => {
-          setOpenBalanceDialog(false);
-          setSelectedStudent(null);
-        }}
-        student={selectedStudent}
-        onUpdateBalance={handleUpdateBalance}
-      />
-
-      {loading ? (
-        <CircularProgress />
-      ) : error ? (
-        <Alert severity="error">{error}</Alert>
-      ) : (
-        <UsersList
-          users={filteredUsers}
-          onEdit={handleEdit}
-          onUpdateBalance={handleOpenBalanceDialog}
-        />
-      )}
-    </div>
+    </Box>
   );
 };
 

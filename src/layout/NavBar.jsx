@@ -3,7 +3,7 @@ import useUserChangePasswordAction from "../hooks/useUserChangePasswordAction";
 import { logout } from "../utils";
 import { Box, Button } from "@mui/material";
 import ChangePasswordForm from "../components/ChangePasswordForm";
-import { buttonStyles } from "../styles/button/button";
+import { layoutButtonStyles } from "../styles/button/button";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -17,23 +17,23 @@ const NavBar = () => {
     <>
       <Box
         sx={{
-          display: "flex", // Використовуємо flexbox для розташування кнопок в ряд
-          flexDirection: { xs: "column", sm: "row" }, // Для мобільних (xs) кнопки вертикально, для планшетів і десктопів (sm і вище) — в ряд
-          gap: { xs: "12px", sm: "16px", md: "24px" }, // Встановлюємо gap в залежності від розміру екрану
-          justifyContent: "center", // Центруємо кнопки по горизонталі
-          alignItems: "center", // Центруємо кнопки по вертикалі
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: { xs: "12px", sm: "16px", md: "24px" },
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Button
           variant="contained"
-          sx={buttonStyles.gradientPrimary}
+          sx={layoutButtonStyles.gradientPrimary}
           onClick={() => setOpenChangePasswordForm(true)}
         >
           Змінити пароль
         </Button>
         <Button
           variant="contained"
-          sx={buttonStyles.gradientLogout}
+          sx={layoutButtonStyles.gradientLogout}
           onClick={() => logout(navigate)}
         >
           Вийти

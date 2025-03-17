@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { buttonStyles } from "../styles/button/button";
+import { layoutButtonStyles } from "../styles/button/button";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -127,13 +127,12 @@ const LoginPage = () => {
         />
         <Button
           variant="contained"
-          fullWidth
-          sx={buttonStyles.gradientPrimary}
+          sx={layoutButtonStyles.gradientPrimary}
           onClick={handleSubmit}
           disabled={loading} // Блокуємо кнопку під час завантаження
         >
           {loading ? (
-            <CircularProgress size={24} sx={{ color: "spinner.main" }} />
+            <CircularProgress size={24} sx={{ color: "spinner.secondary" }} />
           ) : (
             "Увійти"
           )}

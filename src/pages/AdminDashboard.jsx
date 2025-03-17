@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers, resetLoading, clearError } from "../redux/userSlice";
 import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
 import useUserFormAction from "../hooks/useUserFormAction";
+import useUserFilter from "../hooks/useUserFilter";
+import { UserFilter } from "../components/common";
 import BalanceForm from "../components/BalanceForm";
-import SearchField from "../components/SearchField";
 import UserForm from "../components/UserForm";
 import UsersList from "../components/UsersList";
-import { Button, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import PersonAddTwoToneIcon from "@mui/icons-material/PersonAddTwoTone";
 
 const AdminDashboard = () => {
@@ -28,33 +29,61 @@ const AdminDashboard = () => {
     selectedUser,
     setSelectedUser,
   } = useUserFormAction();
+  const { filter, handleFilterChange } = useUserFilter();
+
   const users = useSelector((state) => state.user.list || []);
   const loading = useSelector((state) => state.user.loading || false);
-  const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
+    const fetchData = async () => {
+      dispatch(fetchUsers());
+    };
+    fetchData();
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filteredUsers = users.filter((user) =>
     user.lastName?.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Адмін Панель</h2>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenUserForm(true)}
+    <Box sx={{ padding: 2 }}>
+      <UserFilter filter={filter} onChange={handleFilterChange} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          paddingBottom: 2,
+          paddingTop: 2,
+        }}
       >
-        <PersonAddTwoToneIcon />
-      </Button>
-
+        <Typography
+          variant="h5"
+          sx={{
+            fontSize: "1.5rem",
+          }}
+        >
+          Список користувачів
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenUserForm(true)}
+        >
+          <PersonAddTwoToneIcon />
+        </Button>
+      </Box>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <UsersList
+          users={filteredUsers}
+          onEdit={handleEdit}
+          onUpdateBalance={handleOpenBalanceDialog}
+        />
+      )}
       <BalanceForm
         open={openBalanceDialog}
         onClose={() => {
@@ -64,7 +93,6 @@ const AdminDashboard = () => {
         student={selectedStudent}
         onUpdateBalance={handleUpdateBalance}
       />
-
       <UserForm
         open={openUserForm}
         onClose={() => {
@@ -77,24 +105,7 @@ const AdminDashboard = () => {
         userRole={"curator"}
         initialData={selectedUser}
       />
-
-      <SearchField
-        value={filter}
-        onChange={handleFilterChange}
-        label="Пошук користувача"
-      />
-
-      <h3>Список користувачів</h3>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <UsersList
-          users={filteredUsers}
-          onEdit={handleEdit}
-          onUpdateBalance={handleOpenBalanceDialog}
-        />
-      )}
-    </div>
+    </Box>
   );
 };
 
