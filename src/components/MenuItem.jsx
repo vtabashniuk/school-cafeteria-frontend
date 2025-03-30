@@ -10,17 +10,17 @@ import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOut
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const MenuItem = ({ dish, onDishUpdate }) => {
+const MenuItem = ({ dish, onDishUpdate, student }) => {
   const { handleDeleteDish } = useMenuAction();
 
   return (
     <TableRow key={dish._id}>
-      <TableCell>
+      <TableCell sx={{ display: student ? "none" : "table-cell" }}>
         {dayjs(dish.date).tz("Europe/Kiev").format("DD.MM.YYYY")}
       </TableCell>
       <TableCell>{dish.dishName}</TableCell>
-      <TableCell>{dish.price}</TableCell>
-      <TableCell>
+      <TableCell sx={{textAlign: "right"}}>{dish.price}</TableCell>
+      <TableCell sx={{ display: student ? "none" : "table-cell" }}>
         <Button
           variant="contained"
           color="secondary"

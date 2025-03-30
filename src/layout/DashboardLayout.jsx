@@ -9,8 +9,6 @@ import {
   DashboardHeader,
   DateComponent,
 } from "../components/common";
-// import DateComponent from "../components/common/DateComponent";
-// import DashboardHeader from "../components/common/DashboardHeader";
 import NavBar from "./NavBar";
 
 const DashboardLayout = () => {

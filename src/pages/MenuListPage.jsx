@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useMenuFormAction from "../hooks/useMenuFormAction";
+import { useUser } from "../context/UserContext";
 import useDishUpdateAction from "../hooks/useDishUpdateAction";
 import "dayjs/locale/uk";
 import { Button, CircularProgress, Typography } from "@mui/material";
@@ -12,6 +13,8 @@ import { fetchMenu } from "../redux/menuSlice";
 import dayjs from "dayjs";
 
 const MenuListPage = () => {
+  const { currentUser } = useUser();
+  const userRole = currentUser?.role;
   const dispatch = useDispatch();
   const { openMenuForm, setOpenMenuForm, handleMenuFormSubmit } =
     useMenuFormAction();
@@ -31,7 +34,8 @@ const MenuListPage = () => {
   useEffect(() => {
     // Тільки при монтуванні компонента запит на меню
     dispatch(fetchMenu());
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Фільтрація страв за вибраною датою (только якщо страви є і вони завантажені)
   const filteredDishes = dishes?.filter(
@@ -56,14 +60,16 @@ const MenuListPage = () => {
         selectedDate={selectedDate}
         onDateChange={setSelectedDate} // Оновлюємо стан вибраної дати
       />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenMenuForm(true)}
-        style={{ marginTop: "10px" }}
-      >
-        Додати меню
-      </Button>
+      {userRole === "curator" && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenMenuForm(true)}
+          style={{ marginTop: "10px" }}
+        >
+          Додати меню
+        </Button>
+      )}
       {error && (
         <Typography
           color="error"

@@ -26,15 +26,18 @@ export const ButtonControlBar = () => {
           >
             Меню
           </Button>
-          <Button variant="contained" sx={controlButtonStyles} disabled>
+          <Button variant="contained" onClick={() => navigate("reports")} sx={controlButtonStyles}>
             Звіти
           </Button>
         </Box>
       )}
       {userRole === "student" && (
-        <Box>
+        <Box sx={{ display: "flex", gap: 2, padding: 2 }}>
           <Button variant="contained" onClick={() => navigate("menu-list")}>
             Меню
+          </Button>
+          <Button variant="contained" onClick={() => navigate("order-list")}>
+            Замовлення
           </Button>
           <Button variant="contained" disabled>
             Звіти

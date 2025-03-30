@@ -1,4 +1,5 @@
 import React from "react";
+import { useUser } from "../context/UserContext";
 import MenuItem from "./MenuItem";
 import {
   Table,
@@ -9,12 +10,16 @@ import {
 } from "@mui/material";
 
 const MenuList = ({ dishes, onDishUpdate }) => {
+  const { currentUser } = useUser();
+  const student = currentUser?.role === "student";
   return (
     <>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell>Дата</TableCell>
+            <TableCell sx={{ display: student ? "none" : "table-cell" }}>
+              Дата
+            </TableCell>
             <TableCell>Страва</TableCell>
             <TableCell>Ціна</TableCell>
           </TableRow>
@@ -26,6 +31,7 @@ const MenuList = ({ dishes, onDishUpdate }) => {
                 key={dish._id}
                 dish={dish}
                 onDishUpdate={onDishUpdate}
+                student={student}
               />
             ))
           ) : (

@@ -7,6 +7,8 @@ import StudentDashboard from "./pages/StudentDashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 import StudentsListPage from "./pages/StudentsListPage";
 import MenuListPage from "./pages/MenuListPage";
+import OrderListPage from "./pages/OrderListPage";
+import CuratorReportsPage from "./pages/CuratorReportsPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
@@ -27,14 +29,20 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <CuratorDashboard />,
-      },
-      {
-        path: "students-list",
-        element: <StudentsListPage />,
-      },
-      {
-        path: "menu-list",
-        element: <MenuListPage />,
+        children: [
+          {
+            path: "students-list",
+            element: <StudentsListPage />,
+          },
+          {
+            path: "menu-list",
+            element: <MenuListPage />,
+          },
+          {
+            path: "reports",
+            element: <CuratorReportsPage />,
+          }
+        ],
       },
     ],
   },
@@ -45,6 +53,16 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <StudentDashboard />,
+        children: [
+          {
+            path: "menu-list",
+            element: <MenuListPage />,
+          },
+          {
+            path: "order-list",
+            element: <OrderListPage />
+          }
+        ],
       },
     ],
   },

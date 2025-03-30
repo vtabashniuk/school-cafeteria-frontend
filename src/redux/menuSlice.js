@@ -30,6 +30,22 @@ export const fetchMenu = createAsyncThunk(
   }
 );
 
+export const fetchMenuForToday = createAsyncThunk(
+  "menus/fetchMenuForToday",
+  async (_, { rejectWithValue }) => {
+    try {
+      // Передаємо дату в запиті до сервера
+
+      const response = await api.get("/menus/today");
+      return response.data; // Повертаємо страви на вказану дату
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Не вдалося отримати меню на сьогодні"
+      );
+    }
+  }
+);
+
 export const deleteDish = createAsyncThunk(
   "menus/deleteDish",
   async (id, { rejectWithValue }) => {
@@ -47,9 +63,9 @@ export const deleteDish = createAsyncThunk(
 export const updateDish = createAsyncThunk(
   "menus/updateDish",
   async ({ id, updatedData }, { rejectWithValue }) => {
-      console.log(id);
-      console.log(updatedData);
-      try {
+    console.log(id);
+    console.log(updatedData);
+    try {
       const response = await api.put(`/menus/${id}`, updatedData);
       return response.data; // Повертаємо оновлену страву
     } catch (error) {
@@ -61,6 +77,7 @@ export const updateDish = createAsyncThunk(
 );
 
 const initialState = {
+  todayMenu: [],
   list: [],
   loading: false,
   error: null,
@@ -102,6 +119,12 @@ const menuSlice = createSlice({
       .addCase(fetchMenu.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
+      })
+      .addCase(fetchMenuForToday.fulfilled, (state, action) => {
+        state.todayMenu = action.payload;
+      })
+      .addCase(fetchMenuForToday.rejected, (state, action) => {
+        state.error = action.payload;
       })
       .addCase(deleteDish.fulfilled, (state, action) => {
         state.list = state.list.filter((dish) => dish._id !== action.payload);
