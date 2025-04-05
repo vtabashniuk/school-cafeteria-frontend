@@ -17,7 +17,7 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#6190e8", // Основний колір
+      main: "#0061F2", // Основний колір
     },
     secondary: {
       main: "#212121", // Додатковий колір
@@ -26,8 +26,9 @@ const theme = createTheme({
       default: "#ece9e6", // Колір фону
     },
     spinner: {
-      primary: "6190e8",
-      secondary: "#ece9e6", // Визначаємо колір для спінера
+      primary: "#0061F2", // Визначаємо колір для спінера
+      secondary: "#800000",
+      white: "#FFFFFF",
     },
     text: {
       primary: "#212121", // Колір основного тексту
@@ -35,8 +36,16 @@ const theme = createTheme({
       disabled: "#bdbdbd", // Колір для вимкненого тексту
     },
     textFieldOutline: {
-      primary: "#6190e8",
-      secondary: "#cccccc",
+      primary: "#0061F2",
+      secondary: "#CCCCCC",
+    },
+    gradients: {
+      redBackground:
+        "linear-gradient(to right, #800000 0%, #DC0000 51%, #800000 100%)",
+    },
+    actionButtons: {
+      primary: "#0061F2", // Основний колір кнопок
+      secondary: "#DC0000", // Додатковий колір кнопок
     },
   },
   components: {
@@ -45,8 +54,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            "&:hover fieldset": {
-              borderColor: "primary.main", // Використовуємо колір з палітри (наприклад, primary.main)
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#0061F2", // При наведенні
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#0061F2", // При фокусі
             },
           },
         },

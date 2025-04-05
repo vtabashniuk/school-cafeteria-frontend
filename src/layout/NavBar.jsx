@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import useUserChangePasswordAction from "../hooks/useUserChangePasswordAction";
 import { logout } from "../utils";
 import { Box, Button } from "@mui/material";
-import ChangePasswordForm from "../components/ChangePasswordForm";
+import { ChangePasswordForm } from "../forms";
 import { layoutButtonStyles } from "../styles/button/button";
 
 const NavBar = () => {
@@ -33,7 +33,7 @@ const NavBar = () => {
         </Button>
         <Button
           variant="contained"
-          sx={layoutButtonStyles.gradientLogout}
+          sx={layoutButtonStyles.gradientSecondary}
           onClick={() => logout(navigate)}
         >
           Вийти

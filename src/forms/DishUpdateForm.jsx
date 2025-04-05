@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 
 // Компонент для редагування страви
-const DishUpdateForm = ({ open, dish, onDishUpdate, onClose }) => {
+export const DishUpdateForm = ({ open, dish, onDishUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     dishName: "",
     price: "",
@@ -35,7 +35,7 @@ const DishUpdateForm = ({ open, dish, onDishUpdate, onClose }) => {
   };
 
   const handleChangeDish = async () => {
-      try {
+    try {
       const errorMessage = await onDishUpdate(dish._id, formData);
       if (errorMessage) {
         setError(errorMessage);
@@ -86,5 +86,3 @@ const DishUpdateForm = ({ open, dish, onDishUpdate, onClose }) => {
     </>
   );
 };
-
-export default DishUpdateForm;

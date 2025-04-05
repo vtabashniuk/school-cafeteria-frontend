@@ -1,22 +1,25 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../redux/userSlice";
+import useUserSetPasswordAction from "../hooks/useUserSetPasswordAction";
 import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
 import useUserFilter from "../hooks/useUserFilter";
 import useUserFormAction from "../hooks/useUserFormAction";
-import BalanceForm from "../components/BalanceForm";
-import UserForm from "../components/UserForm";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { BalanceForm, SetPasswordForm, UserForm } from "../forms";
 import UsersList from "../components/UsersList";
 import { UserFilter } from "../components/common";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
 
 const StudentsListPage = () => {
   const dispatch = useDispatch();
+  const {
+    handleOpenSetPasswordForm,
+    handleSetPassword,
+    openSetPasswordForm,
+    setOpenSetPasswordForm,
+    selectedStudentForSetPassword,
+    setSelectedStudentForSetPassword,
+  } = useUserSetPasswordAction();
   const {
     handleOpenBalanceDialog,
     handleUpdateBalance,
@@ -60,8 +63,7 @@ const StudentsListPage = () => {
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "space-between",
-          paddingBottom: 2,
-          paddingTop: 2,
+          py: 2,
         }}
       >
         <Typography
@@ -85,7 +87,8 @@ const StudentsListPage = () => {
       ) : (
         <UsersList
           users={filteredUsers}
-          onEdit={handleEdit}
+            onEdit={handleEdit}
+            onSetPassword={handleOpenSetPasswordForm}
           onUpdateBalance={handleOpenBalanceDialog}
         />
       )}
@@ -97,6 +100,15 @@ const StudentsListPage = () => {
         }}
         student={selectedStudent}
         onUpdateBalance={handleUpdateBalance}
+      />
+      <SetPasswordForm
+        open={openSetPasswordForm}
+        onClose={() => {
+          setOpenSetPasswordForm(false);
+          setSelectedStudentForSetPassword(null);
+        }}
+        user={selectedStudentForSetPassword}
+        onSetPassword={handleSetPassword}
       />
       <UserForm
         open={openUserForm}

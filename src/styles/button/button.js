@@ -16,21 +16,23 @@ const commonProperties = {
 };
 
 export const layoutButtonStyles = {
-  gradientLogout: {
+  gradientSecondary: {
     backgroundImage:
-      "linear-gradient(to right, #cb2d3e 0%, #ef473a 51%, #cb2d3e 100%)",
+      "linear-gradient(to right, #800000 0%, #dc0000 51%, #800000 100%)",
     minWidth: "165px",
     ...commonProperties,
   },
   gradientPrimary: {
     backgroundImage:
-      "linear-gradient(to right, #6190e8 0%, #a7bfe8 51%, #6190e8 100%)",
+      "linear-gradient(to right, #0061F2 0%, #003B5C 51%, #0061F2 100%)",
     minWidth: "165px",
     ...commonProperties,
   },
 };
 
 export const controlButtonStyles = {
+  backgroundImage:
+    "linear-gradient(to right, #0061F2 0%, #003B5C 51%, #0061F2 100%)",
   minWidth: "85px",
   ...commonProperties,
 };

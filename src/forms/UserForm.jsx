@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
+  Alert,
+  Button,
+  Checkbox,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  Button,
-  Typography,
-  Checkbox,
   FormControlLabel,
+  Switch,
+  TextField,
 } from "@mui/material";
 
-const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
+export const UserForm = ({
+  open,
+  onClose,
+  onSubmit,
+  userRole,
+  initialData,
+}) => {
   const [formData, setFormData] = useState({
     lastName: "",
     firstName: "",
@@ -21,8 +28,10 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
     group: "",
     balance: 0,
     isBeneficiaries: false,
+    isActive: true,
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -37,10 +46,11 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
         group: "",
         balance: 0,
         isBeneficiaries: false,
+        isActive: true,
       });
     }
     setError(""); // Очищаємо помилку при відкритті
-  }, [initialData, open, userRole]); // <-- Додано `open`, щоб очищати поля при відкритті форми
+  }, [initialData, open, userRole]); // <-- Додано open, щоб очищати поля при відкритті форми
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -54,6 +64,7 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     if (
       !formData.lastName ||
       !formData.firstName ||
@@ -61,6 +72,7 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
       (!initialData && !formData.password)
     ) {
       setError("Заповніть всі обов'язкові поля");
+      setIsLoading(false);
       return;
     }
 
@@ -78,12 +90,14 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
       const errorMessage = await onSubmit(updatedData); // Отримуємо можливу помилку
       if (errorMessage) {
         setError(errorMessage); // Встановлюємо помилку у форму
+        setIsLoading(false);
         return;
       }
       setError(""); // Якщо все добре, очищаємо помилки
     } catch (err) {
       setError(err.message || "Помилка при збереженні користувача");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -98,85 +112,125 @@ const UserForm = ({ open, onClose, onSubmit, userRole, initialData }) => {
         {initialData ? "Редагувати користувача" : "Додати користувача"}
       </DialogTitle>
       <DialogContent>
-        {error && <Typography color="error">{error}</Typography>}
+        {error && (
+          <Alert severity="error" variant="outlined">
+            {error}
+          </Alert>
+        )}
         <TextField
-          margin="dense"
+          autoComplete="off"
+          fullWidth
           label="Прізвище"
+          margin="dense"
           name="lastName"
-          fullWidth
+          onChange={handleChange}
+          required
           value={formData.lastName}
-          onChange={handleChange}
-          required
+          disabled={isLoading}
         />
         <TextField
-          margin="dense"
+          autoComplete="off"
+          fullWidth
           label="Ім’я"
+          margin="dense"
           name="firstName"
-          fullWidth
-          value={formData.firstName}
           onChange={handleChange}
           required
+          value={formData.firstName}
+          disabled={isLoading}
         />
         <TextField
-          margin="dense"
-          label="Логін"
-          name="login"
+          autoComplete="off"
           fullWidth
-          value={formData.login}
+          label="Логін"
+          margin="dense"
+          name="login"
           onChange={handleChange}
           required
+          value={formData.login}
+          disabled={isLoading}
         />
         {!initialData && (
           <TextField
-            margin="dense"
-            label="Пароль"
-            type="password"
-            name="password"
+            autoComplete="off"
             fullWidth
-            value={formData.password}
+            label="Пароль"
+            margin="dense"
+            name="password"
             onChange={handleChange}
+            type="password"
             required
+            value={formData.password}
+            disabled={isLoading}
           />
         )}
         <TextField
-          margin="dense"
-          label="Група"
-          name="group"
+          autoComplete="off"
           fullWidth
-          value={formData.group}
+          label="Група"
+          margin="dense"
+          name="group"
           onChange={handleChange}
+          required
+          value={formData.group}
+          disabled={isLoading}
         />
         <TextField
-          margin="dense"
+          autoComplete="off"
+          fullWidth
           label="Баланс"
+          margin="dense"
           name="balance"
           type="number"
-          fullWidth
           value={formData.balance}
+          required
           onChange={handleChange}
+          disabled={isLoading}
         />
         <FormControlLabel
           control={
             <Checkbox
-              name="isBeneficiaries"
               checked={formData.isBeneficiaries}
+              name="isBeneficiaries"
               onChange={handleChange}
             />
           }
           label="Пільговик"
           labelPlacement="start"
+          disabled={isLoading}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData.isActive}
+              name="isActive"
+              onChange={handleChange}
+            />
+          }
+          label="Активний"
+          disabled={isLoading}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button
+          onClick={onClose}
+          sx={{
+            color: (theme) => theme.palette.actionButtons.secondary,
+          }}
+          disabled={isLoading}
+        >
           Закрити
         </Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button
+          onClick={handleSubmit}
+          color="primary"
+          loading={isLoading}
+          loadingPosition="end"
+          variant="contained"
+        >
           {initialData ? "Зберегти" : "Додати"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
-
-export default UserForm;

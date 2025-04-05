@@ -1,7 +1,6 @@
-import { Typography, Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 export const DateComponent = () => {
-
   return (
     <Box
       sx={{
@@ -12,22 +11,8 @@ export const DateComponent = () => {
         fontWeight: "bold",
       }}
     >
-      <Typography
-        variant="h6"
-        sx={{
-          display: "block", // Задаємо блочний елемент для переносу тексту
-        }}
-      >
-        Сьогодні:
-      </Typography>
-      <Typography
-        variant="h6"
-        sx={{
-          display: "block", // Задаємо блочний елемент для переносу тексту
-        }}
-      >
-        {new Date().toLocaleDateString()}
-      </Typography>
+      <Typography variant="h6">Сьогодні:</Typography>
+      <Typography variant="h6">{new Date().toLocaleDateString()}</Typography>
     </Box>
   );
 };

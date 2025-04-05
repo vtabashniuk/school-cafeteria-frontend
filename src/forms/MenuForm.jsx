@@ -10,13 +10,13 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { getNextMonday, parseText } from "../utils";
-import DatePickerUALocalized from "./DatePickerUALocalized";
-import DateWithTextField from "./DateWithTextField";
+import DatePickerUALocalized from "../components/DatePickerUALocalized";
+import DateWithTextField from "../components/DateWithTextField";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const MenuForm = ({ open, onClose, onSubmit }) => {
+export const MenuForm = ({ open, onClose, onSubmit }) => {
   const nextMonday = dayjs(getNextMonday());
   const [selectedDate, setSelectedDate] = useState(nextMonday);
   const [menuData, setMenuData] = useState([]);
@@ -108,5 +108,3 @@ const MenuForm = ({ open, onClose, onSubmit }) => {
     </Dialog>
   );
 };
-
-export default MenuForm;

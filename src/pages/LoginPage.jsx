@@ -5,7 +5,6 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
   Container,
   IconButton,
   InputAdornment,
@@ -22,7 +21,6 @@ const LoginPage = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loginFocused, setLoginFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -47,42 +45,24 @@ const LoginPage = () => {
         <TextField
           autoComplete="off"
           fullWidth
-          margin="normal"
           label="Логін"
-          variant="outlined"
-          value={login}
-          onBlur={() => setLoginFocused(false)} // Установлюємо фокус в false
+          margin="normal"
           onChange={(e) => setLogin(e.target.value)}
-          onFocus={() => setLoginFocused(true)} // Установлюємо фокус в true
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: loginFocused
-                  ? "textFieldOutline.primary"
-                  : "textFieldOutline.secondary", // Зміна кольору outline
-              },
-              "&:hover fieldset": {
-                borderColor: loginFocused
-                  ? "textFieldOutline.primary"
-                  : "textFieldOutline.primary", // Колір при ховері
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "textFieldOutline.primary", // Колір при фокусі
-              },
-            },
-          }}
+          value={login}
+          variant="outlined"
+          disabled={loading}
         />
         <TextField
           autoComplete="off"
           fullWidth
-          margin="normal"
           label="Пароль"
-          type={showPassword ? "text" : "password"}
-          variant="outlined"
-          value={password}
+          margin="normal"
           onBlur={() => setPasswordFocused(false)} // Установлюємо фокус в false
           onChange={(e) => setPassword(e.target.value)}
           onFocus={() => setPasswordFocused(true)} // Установлюємо фокус в true
+          type={showPassword ? "text" : "password"}
+          value={password}
+          variant="outlined"
           slotProps={{
             input: {
               endAdornment: (
@@ -92,9 +72,9 @@ const LoginPage = () => {
                       showPassword ? "приховати пароль" : "показати пароль"
                     }
                     sx={{
-                      color: passwordFocused
+                      color: passwordFocused // Змінюємо колір в залежності від фокусу
                         ? "textFieldOutline.primary"
-                        : "extFieldOutline.secondary", // Змінюємо колір в залежності від фокусу
+                        : "extFieldOutline.secondary",
                     }}
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
@@ -107,35 +87,21 @@ const LoginPage = () => {
               ),
             },
           }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: passwordFocused
-                  ? "textFieldOutline.primary"
-                  : "textFieldOutline.secondary", // Зміна кольору обводки
-              },
-              "&:hover fieldset": {
-                borderColor: passwordFocused
-                  ? "textFieldOutline.primary"
-                  : "textFieldOutline.primary", // Колір при ховері
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "textFieldOutline.primary", // Колір при фокусі
-              },
-            },
-          }}
+          disabled={loading}
         />
         <Button
           variant="contained"
-          sx={layoutButtonStyles.gradientPrimary}
+          sx={{
+            ...layoutButtonStyles.gradientPrimary,
+            "& .MuiCircularProgress-circle": {
+              stroke: (theme) => theme.palette.spinner.white, // Задає колір для спінера
+            },
+          }}
           onClick={handleSubmit}
-          disabled={loading} // Блокуємо кнопку під час завантаження
+          loading={loading}
+          loadingPosition="end"
         >
-          {loading ? (
-            <CircularProgress size={24} sx={{ color: "spinner.secondary" }} />
-          ) : (
-            "Увійти"
-          )}
+          Увійти
         </Button>
       </Box>
     </Container>

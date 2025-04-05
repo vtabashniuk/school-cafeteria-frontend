@@ -8,15 +8,18 @@ const useStudentBalanceAction = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const handleOpenBalanceDialog = (user) => {
-    setSelectedStudent(user);
     setOpenBalanceDialog(true);
+    setSelectedStudent(user);
   };
   const handleUpdateBalance = async (id, newBalance) => {
     try {
-      await dispatch(updateBalance({ id, newBalance })).unwrap();
+      const response = await dispatch(
+        updateBalance({ id, newBalance })
+      ).unwrap();
       await dispatch(fetchUsers());
       setSelectedStudent(null);
       setOpenBalanceDialog(false);
+      return response;
     } catch (error) {
       return error || "Помилка оновлення балансу";
     }

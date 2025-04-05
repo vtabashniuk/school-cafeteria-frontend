@@ -4,11 +4,7 @@ import { Outlet } from "react-router-dom";
 const StudentDashboard = () => {
   useAutologout();
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 };
 
 export default StudentDashboard;

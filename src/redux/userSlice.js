@@ -54,7 +54,7 @@ export const updateBalance = createAsyncThunk(
       const response = await api.put(`/users/${id}/updatebalance`, {
         newBalance,
       });
-      return response.data;
+      return { data: response.data, status: response.status };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Помилка оновлення балансу"
@@ -83,11 +83,10 @@ export const setPassword = createAsyncThunk(
   "users/setPassword",
   async ({ id, password }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/users/${id}/setpassword`, {
+      const { data, status } = await api.put(`/users/${id}/setpassword`, {
         newPassword: password,
       });
-      alert(response.data.message);
-      return response.data;
+      return { data, status };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Помилка встановлення пароля"

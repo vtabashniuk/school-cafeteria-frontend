@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchMenu } from "../redux/menuSlice";
 import useMenuFormAction from "../hooks/useMenuFormAction";
 import { useUser } from "../context/UserContext";
 import useDishUpdateAction from "../hooks/useDishUpdateAction";
 import "dayjs/locale/uk";
-import { Button, CircularProgress, Typography } from "@mui/material";
-import MenuForm from "../components/MenuForm";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
+import { DishUpdateForm, MenuForm } from "../forms";
 import MenuList from "../components/MenuList";
 import DatePickerUALocalized from "../components/DatePickerUALocalized";
-import DishUpdateForm from "../components/DishUpdateForm";
-import { fetchMenu } from "../redux/menuSlice";
 import dayjs from "dayjs";
 
 const MenuListPage = () => {
@@ -32,7 +37,6 @@ const MenuListPage = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs()); // За замовчуванням поточна дата
 
   useEffect(() => {
-    // Тільки при монтуванні компонента запит на меню
     dispatch(fetchMenu());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -43,8 +47,8 @@ const MenuListPage = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
-      {loading && (
+    <Box p={2}>
+      {/* {loading && (
         <div
           style={{
             display: "flex",
@@ -54,34 +58,32 @@ const MenuListPage = () => {
         >
           <CircularProgress />
         </div>
-      )}
-      <DatePickerUALocalized
-        label={"Виберіть дату"}
-        selectedDate={selectedDate}
-        onDateChange={setSelectedDate} // Оновлюємо стан вибраної дати
-      />
-      {userRole === "curator" && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setOpenMenuForm(true)}
-          style={{ marginTop: "10px" }}
-        >
-          Додати меню
-        </Button>
-      )}
+      )} */}
+      <Box py={2} sx={{ display: "flex", gap: 1 }}>
+        <DatePickerUALocalized
+          label={"Виберіть дату"}
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate} // Оновлюємо стан вибраної дати
+        />
+        {userRole === "curator" && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenMenuForm(true)}
+          >
+            Додати меню
+          </Button>
+        )}
+      </Box>
       {error && (
-        <Typography
-          color="error"
-          style={{ textAlign: "center", marginTop: "20px" }}
-        >
+        <Alert severity="error" variant="outlined">
           Помилка при завантаженні страв: {error}
-        </Typography>
+        </Alert>
       )}
       {filteredDishes?.length === 0 && !loading && !error && (
-        <Typography style={{ textAlign: "center", marginTop: "20px" }}>
+        <Alert severity="info" variant="outlined">
           Немає доступних страв на цю дату.
-        </Typography>
+        </Alert>
       )}
       <MenuList
         dishes={filteredDishes || []}
@@ -101,7 +103,7 @@ const MenuListPage = () => {
         }}
         onDishUpdate={handleUpdateDish}
       />
-    </div>
+    </Box>
   );
 };
 

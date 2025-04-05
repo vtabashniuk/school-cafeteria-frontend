@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Alert,
   Button,
-  TextField,
-  Typography,
-  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   InputAdornment,
   IconButton,
+  TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
+export const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [newPasswordFocused, setNewPasswordFocused] = useState(false);
+  const [oldPasswordFocused, setOldPasswordFocused] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
@@ -56,18 +57,24 @@ const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} maxWidth="xs">
       <DialogTitle>Змінити пароль</DialogTitle>
       <DialogContent>
-        {error && <Typography color="error">{error}</Typography>}
+        {error && (
+          <Alert severity="error" variant="outlined">
+            {error}
+          </Alert>
+        )}
         <TextField
-          label="Cтарий пароль"
-          type={showOldPassword ? "text" : "password"}
+          autoComplete="off"
           fullWidth
+          label="Cтарий пароль"
           margin="normal"
-          value={oldPassword}
+          onBlur={() => setOldPasswordFocused(false)} // Установлюємо фокус в false
           onChange={(e) => setOldPassword(e.target.value)}
-          disabled={isLoading}
+          onFocus={() => setOldPasswordFocused(true)} // Установлюємо фокус в true
+          type={showOldPassword ? "text" : "password"}
+          value={oldPassword}
           slotProps={{
             input: {
               endAdornment: (
@@ -76,6 +83,11 @@ const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
                     aria-label={
                       showOldPassword ? "приховати пароль" : "показати пароль"
                     }
+                    sx={{
+                      color: oldPasswordFocused // Змінюємо колір в залежності від фокусу
+                        ? "textFieldOutline.primary"
+                        : "extFieldOutline.secondary",
+                    }}
                     onClick={handleClickShowOldPassword}
                     onMouseDown={handleMouseDownPassword}
                     onMouseUp={handleMouseUpPassword}
@@ -87,15 +99,18 @@ const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
               ),
             },
           }}
+          disabled={isLoading}
         />
         <TextField
-          label="Новий пароль"
-          type={showNewPassword ? "text" : "password"}
+          autoComplete="off"
           fullWidth
+          label="Новий пароль"
           margin="normal"
-          value={newPassword}
+          onBlur={() => setNewPasswordFocused(false)} // Установлюємо фокус в false
           onChange={(e) => setNewPassword(e.target.value)}
-          disabled={isLoading}
+          onFocus={() => setNewPasswordFocused(true)} // Установлюємо фокус в true
+          type={showNewPassword ? "text" : "password"}
+          value={newPassword}
           slotProps={{
             input: {
               endAdornment: (
@@ -104,6 +119,11 @@ const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
                     aria-label={
                       showNewPassword ? "приховати пароль" : "показати пароль"
                     }
+                    sx={{
+                      color: newPasswordFocused // Змінюємо колір в залежності від фокусу
+                        ? "textFieldOutline.primary"
+                        : "extFieldOutline.secondary",
+                    }}
                     onClick={handleClickShowNewPassword}
                     onMouseDown={handleMouseDownPassword}
                     onMouseUp={handleMouseUpPassword}
@@ -115,26 +135,29 @@ const ChangePasswordForm = ({ open, onClose, onChangePassword }) => {
               ),
             },
           }}
+          disabled={isLoading}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={isLoading}>
+        <Button
+          onClick={onClose}
+          sx={{
+            color: (theme) => theme.palette.actionButtons.secondary,
+          }}
+          disabled={isLoading}
+        >
           Закрити
         </Button>
         <Button
-          onClick={handleChangePassword}
           color="primary"
+          loading={isLoading}
+          loadingPosition="end"
+          onClick={handleChangePassword}
           variant="contained"
         >
-          {isLoading ? (
-            <CircularProgress color="white" size={24} />
-          ) : (
-            "Змінити пароль"
-          )}
+          Змінити пароль
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
-
-export default ChangePasswordForm;

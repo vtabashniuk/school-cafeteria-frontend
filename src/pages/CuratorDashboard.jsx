@@ -4,11 +4,7 @@ import useAutoLogout from "../hooks/useAutoLogout";
 const CuratorDashboard = () => {
   useAutoLogout();
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 };
 
 export default CuratorDashboard;
