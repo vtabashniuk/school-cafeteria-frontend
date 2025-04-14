@@ -8,7 +8,7 @@ const useMenuFormAction = () => {
 
   const handleMenuFormSubmit = async (formData) => {
     try {
-      await dispatch(addDish(formData));
+      await dispatch(addDish(formData)).unwrap();
       setOpenMenuForm(false);
     } catch (error) {
       return error || "Помилка при додаванні меню";

@@ -2,6 +2,7 @@ import React from "react";
 import { useUser } from "../context/UserContext";
 import MenuItem from "./MenuItem";
 import {
+  Alert,
   Table,
   TableHead,
   TableRow,
@@ -14,7 +15,7 @@ const MenuList = ({ dishes, onDishUpdate }) => {
   const student = currentUser?.role === "student";
   return (
     <>
-      <Table stickyHeader>
+      <Table stickyHeader sx={{ tableLayout: "fixed" }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ display: student ? "none" : "table-cell" }}>
@@ -22,6 +23,9 @@ const MenuList = ({ dishes, onDishUpdate }) => {
             </TableCell>
             <TableCell>Страва</TableCell>
             <TableCell>Ціна</TableCell>
+            <TableCell sx={{ display: student ? "none" : "table-cell" }}>
+              Дії
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -36,8 +40,10 @@ const MenuList = ({ dishes, onDishUpdate }) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} align="center">
-                Немає страв
+              <TableCell colSpan={4} align="center">
+                <Alert severity="info" variant="outlined">
+                  Немає доступних страв на цю дату.
+                </Alert>
               </TableCell>
             </TableRow>
           )}

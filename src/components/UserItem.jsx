@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Button,
@@ -96,7 +95,6 @@ const UserItem = ({ user, onEdit, onSetPassword, onUpdateBalance }) => {
           </Button>
           <Button
             variant="contained"
-            color="primary"
             sx={{
               ...layoutButtonStyles.gradientSecondary,
               minWidth: "50px",

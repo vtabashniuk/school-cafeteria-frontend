@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMenu } from "../redux/menuSlice";
-import useMenuFormAction from "../hooks/useMenuFormAction";
 import { useUser } from "../context/UserContext";
+import useFreSaleDishAction from "../hooks/useFreeSaleDishAction";
+import useMenuFormAction from "../hooks/useMenuFormAction";
 import useDishUpdateAction from "../hooks/useDishUpdateAction";
 import "dayjs/locale/uk";
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
-import { DishUpdateForm, MenuForm } from "../forms";
+import { Alert, Box, Button } from "@mui/material";
+import { DishUpdateForm, FreeSaleDishForm, MenuForm } from "../forms";
 import MenuList from "../components/MenuList";
 import DatePickerUALocalized from "../components/DatePickerUALocalized";
 import dayjs from "dayjs";
@@ -21,7 +16,12 @@ const MenuListPage = () => {
   const { currentUser } = useUser();
   const userRole = currentUser?.role;
   const dispatch = useDispatch();
-  const { openMenuForm, setOpenMenuForm, handleMenuFormSubmit } =
+  const {
+    handleFreeSaleDishSubmit,
+    openFreeSaleDishForm,
+    setOpenFreeSaleDishForm,
+  } = useFreSaleDishAction();
+  const { handleMenuFormSubmit, openMenuForm, setOpenMenuForm } =
     useMenuFormAction();
   const {
     handleOpenDishDialog,
@@ -32,7 +32,7 @@ const MenuListPage = () => {
     setSelectedDish,
   } = useDishUpdateAction();
 
-  const { list: dishes, loading, error } = useSelector((state) => state.menu);
+  const { list: dishes, error } = useSelector((state) => state.menu);
 
   const [selectedDate, setSelectedDate] = useState(dayjs()); // За замовчуванням поточна дата
 
@@ -48,43 +48,41 @@ const MenuListPage = () => {
 
   return (
     <Box p={2}>
-      {/* {loading && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <CircularProgress />
-        </div>
-      )} */}
-      <Box py={2} sx={{ display: "flex", gap: 1 }}>
+      <Box py={2} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
         <DatePickerUALocalized
           label={"Виберіть дату"}
-          selectedDate={selectedDate}
           onDateChange={setSelectedDate} // Оновлюємо стан вибраної дати
+          selectedDate={selectedDate}
         />
         {userRole === "curator" && (
           <Button
-            variant="contained"
             color="primary"
             onClick={() => setOpenMenuForm(true)}
+            sx={{ maxHeight: { sm: "36.5px" } }}
+            variant="contained"
           >
             Додати меню
           </Button>
         )}
+        <Button
+          color="primary"
+          onClick={() => setOpenFreeSaleDishForm(true)}
+          sx={{ maxHeight: { sm: "36.5px" } }}
+          variant="contained"
+        >
+          Вільний продаж
+        </Button>
       </Box>
       {error && (
         <Alert severity="error" variant="outlined">
           Помилка при завантаженні страв: {error}
         </Alert>
       )}
-      {filteredDishes?.length === 0 && !loading && !error && (
+      {/* {filteredDishes?.length === 0 && !loading && !error && (
         <Alert severity="info" variant="outlined">
           Немає доступних страв на цю дату.
         </Alert>
-      )}
+      )} */}
       <MenuList
         dishes={filteredDishes || []}
         onDishUpdate={handleOpenDishDialog}
@@ -93,6 +91,12 @@ const MenuListPage = () => {
         open={openMenuForm}
         onClose={() => setOpenMenuForm(false)} // Тільки закриваємо без додаткових запитів
         onSubmit={handleMenuFormSubmit} // Оновлений метод для обробки форми
+      />
+      <FreeSaleDishForm
+        open={openFreeSaleDishForm}
+        onClose={() => setOpenFreeSaleDishForm(false)}
+        onDishSubmit={handleFreeSaleDishSubmit}
+        selectedDate={selectedDate}
       />
       <DishUpdateForm
         open={openDishDialog}

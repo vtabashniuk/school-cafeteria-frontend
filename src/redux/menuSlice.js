@@ -16,6 +16,20 @@ export const addDish = createAsyncThunk(
   }
 );
 
+export const addFreeSaleDish = createAsyncThunk(
+  "menus/addFreeSaleDish",
+  async (menuData, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/menus/freesaledish", menuData);
+      return response.data.item;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Помилка додавання страви"
+      );
+    }
+  }
+);
+
 export const fetchMenu = createAsyncThunk(
   "menus/fetchMenu",
   async (_, { rejectWithValue }) => {
@@ -105,6 +119,18 @@ const menuSlice = createSlice({
         state.loading = false;
       })
       .addCase(addDish.rejected, (state, action) => {
+        state.error = action.payload || "Помилка при додаванні страви";
+        state.loading = false;
+      })
+      .addCase(addFreeSaleDish.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addFreeSaleDish.fulfilled, (state, action) => {
+        state.list.push(action.payload);
+        state.loading = false;
+      })
+      .addCase(addFreeSaleDish.rejected, (state, action) => {
         state.error = action.payload || "Помилка при додаванні страви";
         state.loading = false;
       })

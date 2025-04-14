@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   Dialog,
   DialogTitle,
@@ -20,10 +21,13 @@ export const MenuForm = ({ open, onClose, onSubmit }) => {
   const nextMonday = dayjs(getNextMonday());
   const [selectedDate, setSelectedDate] = useState(nextMonday);
   const [menuData, setMenuData] = useState([]);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (open) {
       setMenuData([]);
+      setError("");
     }
   }, [open]);
 
@@ -38,22 +42,29 @@ export const MenuForm = ({ open, onClose, onSubmit }) => {
     : [];
 
   const handleSubmit = async () => {
-    // Збираємо всі введені дані в масив
-    const parsedData = menuData
-      .map(({ date, textData }) => {
-        const dateInEET = dayjs(date).tz("Europe/Kiev").startOf("day");
-        const dateWithoutTimeShift = dateInEET.format(
-          "YYYY-MM-DDTHH:mm:ss.SSSZ"
-        );
-        return parseText(textData).map((item) => ({
-          ...item, // Це буде dishName і price
-          date: dateWithoutTimeShift, // Додаємо відповідну дату
-        }));
-      })
-      .flat(); // використовуємо flat, щоб вийшов один масив страв
+    setIsLoading(true);
+    setError("");
+    try {
+      // Збираємо всі введені дані в масив
+      const parsedData = menuData
+        .map(({ date, textData }) => {
+          const dateInEET = dayjs(date).tz("Europe/Kiev").startOf("day");
+          const dateWithoutTimeShift = dateInEET.format(
+            "YYYY-MM-DDTHH:mm:ss.SSSZ"
+          );
+          return parseText(textData).map((item) => ({
+            ...item, // Це буде dishName і price
+            date: dateWithoutTimeShift, // Додаємо відповідну дату
+          }));
+        })
+        .flat(); // використовуємо flat, щоб вийшов один масив страв
 
-    await onSubmit(parsedData);
-    console.log("Parsed Menu Data:", parsedData);
+      await onSubmit(parsedData);
+    } catch (error) {
+      setError(error.message || "Помилка при відправці даних меню.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -62,13 +73,23 @@ export const MenuForm = ({ open, onClose, onSubmit }) => {
       onClose={() => {
         onClose();
       }}
+      sx={{
+        "& .MuiDialogContent-root": {
+          paddingTop: 2,
+        },
+      }}
     >
       <DialogTitle>Додати меню</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ padding: 2}}>
+        {error && (
+          <Alert severity="error" variant="outlined">
+            {error}
+          </Alert>
+        )}
         <DatePickerUALocalized
           label={"Виберіть дату"}
-          selectedDate={selectedDate}
           onDateChange={setSelectedDate}
+          selectedDate={selectedDate}
         />
 
         {workDays.map(({ dayName, date }) => (
@@ -98,10 +119,22 @@ export const MenuForm = ({ open, onClose, onSubmit }) => {
         ))}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button
+          onClick={onClose}
+          sx={{
+            color: (theme) => theme.palette.actionButtons.secondary,
+          }}
+          disabled={isLoading}
+        >
           Закрити
         </Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button
+          color="primary"
+          loading={isLoading}
+          loadingPosition="end"
+          onClick={handleSubmit}
+          variant="contained"
+        >
           Додати
         </Button>
       </DialogActions>
