@@ -78,11 +78,6 @@ const MenuListPage = () => {
           Помилка при завантаженні страв: {error}
         </Alert>
       )}
-      {/* {filteredDishes?.length === 0 && !loading && !error && (
-        <Alert severity="info" variant="outlined">
-          Немає доступних страв на цю дату.
-        </Alert>
-      )} */}
       <MenuList
         dishes={filteredDishes || []}
         onDishUpdate={handleOpenDishDialog}
