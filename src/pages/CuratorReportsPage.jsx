@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { getOrdersByGroupForToday } from "../redux/reportSlice";
 import {
   Box,
   Typography,
@@ -22,7 +23,6 @@ import {
   TableRow,
   TableFooter,
 } from "@mui/material";
-import { getOrdersByGroupForToday } from "../redux/reportSlice";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 
@@ -74,7 +74,6 @@ const CuratorReportsPage = () => {
   };
 
   const handleDownloadPDF = () => {
-    // const totalSum = report.reduce((sum, row) => sum + row.total, 0);
     const docDefinition = {
       content: [
         {

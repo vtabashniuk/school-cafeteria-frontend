@@ -1,8 +1,8 @@
-import { useUser } from "../../context/UserContext";
+import { useSelector } from "react-redux";
 import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 
 export const DashboardHeader = ({ loading }) => {
-  const { currentUser } = useUser();
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   return (
     <>

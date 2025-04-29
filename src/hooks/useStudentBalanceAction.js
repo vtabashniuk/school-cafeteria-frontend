@@ -16,7 +16,7 @@ const useStudentBalanceAction = () => {
       const response = await dispatch(
         updateBalance({ id, newBalance })
       ).unwrap();
-      await dispatch(fetchUsers());
+      await dispatch(fetchUsers()).unwrap();
       setSelectedStudent(null);
       setOpenBalanceDialog(false);
       return response;

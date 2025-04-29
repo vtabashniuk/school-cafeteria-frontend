@@ -21,7 +21,7 @@ const useUserFormAction = () => {
       } else {
         await dispatch(addUser(formData)).unwrap();
       }
-      await dispatch(fetchUsers());
+      await dispatch(fetchUsers()).unwrap();
       setSelectedUser(null);
       setOpenUserForm(false);
     } catch (error) {

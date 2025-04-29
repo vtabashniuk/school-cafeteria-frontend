@@ -15,7 +15,7 @@ const useDishUpdateAction = () => {
   const handleUpdateDish = async (id, updatedData) => {
     try {
       await dispatch(updateDish({ id, updatedData })).unwrap();
-      await dispatch(fetchMenu());
+      await dispatch(fetchMenu()).unwrap();
       setSelectedDish(null);
       setOpenDishDialog(false);
     } catch (error) {

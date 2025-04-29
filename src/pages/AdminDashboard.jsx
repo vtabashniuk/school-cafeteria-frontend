@@ -4,11 +4,11 @@ import { fetchUsers, resetLoading, clearError } from "../redux/userSlice";
 import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
 import useUserFormAction from "../hooks/useUserFormAction";
 import useUserFilter from "../hooks/useUserFilter";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import PersonAddTwoToneIcon from "@mui/icons-material/PersonAddTwoTone";
 import { UserFilter } from "../components/common";
 import { BalanceForm, UserForm } from "../forms";
 import UsersList from "../components/UsersList";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import PersonAddTwoToneIcon from "@mui/icons-material/PersonAddTwoTone";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch(fetchUsers());
+      await dispatch(fetchUsers()).unwrap();
     };
     fetchData();
 

@@ -6,7 +6,6 @@ export const addDish = createAsyncThunk(
   async (menuData, { rejectedWithValue }) => {
     try {
       const response = await api.post("/menus", menuData);
-      console.log(response.data.items);
       return response.data.items;
     } catch (error) {
       return rejectedWithValue(
@@ -77,8 +76,6 @@ export const deleteDish = createAsyncThunk(
 export const updateDish = createAsyncThunk(
   "menus/updateDish",
   async ({ id, updatedData }, { rejectWithValue }) => {
-    console.log(id);
-    console.log(updatedData);
     try {
       const response = await api.put(`/menus/${id}`, updatedData);
       return response.data; // Повертаємо оновлену страву

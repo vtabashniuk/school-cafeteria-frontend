@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMenu } from "../redux/menuSlice";
-import { useUser } from "../context/UserContext";
 import useFreSaleDishAction from "../hooks/useFreeSaleDishAction";
 import useMenuFormAction from "../hooks/useMenuFormAction";
 import useDishUpdateAction from "../hooks/useDishUpdateAction";
-import "dayjs/locale/uk";
-import { Alert, Box, Button } from "@mui/material";
-import { DishUpdateForm, FreeSaleDishForm, MenuForm } from "../forms";
 import MenuList from "../components/MenuList";
 import DatePickerUALocalized from "../components/DatePickerUALocalized";
 import dayjs from "dayjs";
+import "dayjs/locale/uk";
+import { Alert, Box, Button } from "@mui/material";
+import { DishUpdateForm, FreeSaleDishForm, MenuForm } from "../forms";
 
 const MenuListPage = () => {
-  const { currentUser } = useUser();
+  const currentUser = useSelector((state) => state.user.currentUser);
   const userRole = currentUser?.role;
   const dispatch = useDispatch();
   const {

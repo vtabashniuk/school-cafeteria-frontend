@@ -1,4 +1,3 @@
-import React from "react";
 import UserItem from "./UserItem";
 import {
   Alert,

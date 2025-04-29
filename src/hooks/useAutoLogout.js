@@ -30,15 +30,6 @@ const useAutoLogout = () => {
       console.log("❌ Помилка перевірки токена:", error);
     }
   });
-
-//   useEffect(() => {
-//     const handleBeforeUnload = () => {
-//       localStorage.removeItem("token"); // Видаляє токен при закритті сайту
-//     };
-
-//     window.addEventListener("beforeunload", handleBeforeUnload);
-//     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-//   }, []);
 };
 
 export default useAutoLogout;

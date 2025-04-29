@@ -5,7 +5,7 @@ const useMenuAction = () => {
   const dispatch = useDispatch();
 
   const handleDeleteDish = async (dishId) => {
-    await dispatch(deleteDish(dishId));
+    await dispatch(deleteDish(dishId)).unwrap();
   };
 
   return { handleDeleteDish };

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/authSlice";
+import { getMe } from "../redux/userSlice";
 import api from "../services/api";
 
 const useAuth = () => {
@@ -16,6 +17,7 @@ const useAuth = () => {
     try {
       const response = await api.post("/auth/login", { login, password });
       dispatch(setUser(response?.data)); // Оновлюємо Redux state з новими даними користувача
+      dispatch(getMe()).unwrap();
 
       switch (response?.data?.user?.role) {
         case "admin":

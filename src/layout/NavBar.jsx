@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import useUserChangePasswordAction from "../hooks/useUserChangePasswordAction";
 import { logout } from "../utils";
-import { Box, Button } from "@mui/material";
 import { ChangePasswordForm } from "../forms";
+import { Box, Button } from "@mui/material";
 import { layoutButtonStyles } from "../styles/button/button";
 
 const NavBar = () => {

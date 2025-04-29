@@ -1,10 +1,8 @@
-import React from "react";
 import dayjs from "dayjs";
-
+import updateLocale from "dayjs/plugin/updateLocale";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ukUA } from "@mui/x-date-pickers/locales";
-import updateLocale from "dayjs/plugin/updateLocale";
 
 const ukrainianLocale =
   ukUA.components.MuiLocalizationProvider.defaultProps.localeText;

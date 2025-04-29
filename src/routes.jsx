@@ -9,6 +9,7 @@ import StudentsListPage from "./pages/StudentsListPage";
 import MenuListPage from "./pages/MenuListPage";
 import OrderListPage from "./pages/OrderListPage";
 import CuratorReportsPage from "./pages/CuratorReportsPage";
+import StudentReportsPage from "./pages/StudentReportsPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
           {
             path: "reports",
             element: <CuratorReportsPage />,
-          }
+          },
         ],
       },
     ],
@@ -60,8 +61,12 @@ const router = createBrowserRouter([
           },
           {
             path: "order-list",
-            element: <OrderListPage />
-          }
+            element: <OrderListPage />,
+          },
+          {
+            path: "reports",
+            element: <StudentReportsPage />,
+          },
         ],
       },
     ],

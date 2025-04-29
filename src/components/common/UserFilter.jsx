@@ -1,8 +1,8 @@
-import { useUser } from "../../context/UserContext";
+import { useSelector } from "react-redux";
 import { TextField } from "@mui/material";
 
 export const UserFilter = ({ filter, onChange }) => {
-  const { currentUser } = useUser();
+  const currentUser = useSelector((state) => state.user.currentUser);
   const userRole = currentUser?.role;
 
   return (

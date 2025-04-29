@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useUser } from "../context/UserContext";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import MenuItem from "./MenuItem";
 import {
   Alert,
@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 const MenuList = ({ dishes, onDishUpdate }) => {
-  const { currentUser } = useUser();
+  const currentUser = useSelector((state) => state.user.currentUser);
   const student = currentUser?.role === "student";
 
   // Стани для вкладок
