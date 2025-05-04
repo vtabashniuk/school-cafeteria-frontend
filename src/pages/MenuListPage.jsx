@@ -54,23 +54,25 @@ const MenuListPage = () => {
           selectedDate={selectedDate}
         />
         {userRole === "curator" && (
-          <Button
-            color="primary"
-            onClick={() => setOpenMenuForm(true)}
-            sx={{ maxHeight: { sm: "36.5px" } }}
-            variant="contained"
-          >
-            Додати меню
-          </Button>
+          <>
+            <Button
+              color="primary"
+              onClick={() => setOpenMenuForm(true)}
+              sx={{ maxHeight: { sm: "36.5px" } }}
+              variant="contained"
+            >
+              Додати меню
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => setOpenFreeSaleDishForm(true)}
+              sx={{ maxHeight: { sm: "36.5px" } }}
+              variant="contained"
+            >
+              Вільний продаж
+            </Button>
+          </>
         )}
-        <Button
-          color="primary"
-          onClick={() => setOpenFreeSaleDishForm(true)}
-          sx={{ maxHeight: { sm: "36.5px" } }}
-          variant="contained"
-        >
-          Вільний продаж
-        </Button>
       </Box>
       {error && (
         <Alert severity="error" variant="outlined">
