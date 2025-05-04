@@ -5,8 +5,8 @@ export const parseText = (inputText) => {
     .filter((line) => line.trim() !== "")
     .map((item) => {
       return {
-        dishName: item.split("\t")[0].replace(/ {2,}/g, " ").trim(),
-        price: parseFloat(item.split("\t")[2].replace(",", ".")),
+        dishName: item.split("\t")[1].replace(/ {2,}/g, " ").trim(),
+        price: parseFloat(item.split("\t")[3].replace(",", ".")),
       };
     });
 };
