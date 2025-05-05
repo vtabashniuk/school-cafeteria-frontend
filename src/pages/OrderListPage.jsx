@@ -58,8 +58,19 @@ const OrderListPage = () => {
     ? currentUser?.balance + editingOrder.total - total
     : currentUser?.balance - total;
 
+  // Перевірка, чи вже є пільгове або звичайне замовлення на сьогодні
+  const hasBeneficiaryOrder = orders.some((order) => order.isBeneficiaryOrder);
+  const hasRegularOrder = orders.some((order) => !order.isBeneficiaryOrder);
+
   const handleQuantityChange = (dishId, quantity) => {
     if (/^\d*$/.test(quantity)) {
+      const dish = todayMenu.find((dish) => dish._id === dishId);
+      if (currentUser?.isBeneficiaries && dish?.isFreeSale === false) {
+        setOrderError(
+          "Пільговики можуть замовляти лише страви з вільного продажу"
+        );
+        return;
+      }
       setOrderItems((prevItems) => {
         const updatedItems = [...prevItems];
         const itemIndex = updatedItems.findIndex(
@@ -74,7 +85,7 @@ const OrderListPage = () => {
       });
       setOrderError("");
     } else {
-      setOrderError("Введеть ціле значення кількості");
+      setOrderError("Введіть ціле значення кількості");
       return;
     }
   };
@@ -83,6 +94,19 @@ const OrderListPage = () => {
     setEditingOrder(null);
     setOrderItems([]);
     setOrderDialogOpen(true);
+  };
+
+  const handleBeneficiaryOrderClick = () => {
+    const orderData = {
+      studentId: currentUser._id,
+      items: [],
+      total: 0,
+      isBeneficiaryOrder: true,
+    };
+    dispatch(createOrder(orderData)).then(() => {
+      dispatch(fetchTodayOrders());
+      dispatch(getMe());
+    });
   };
 
   const handleEditClick = (order) => {
@@ -121,6 +145,7 @@ const OrderListPage = () => {
           };
         }),
       total,
+      isBeneficiaryOrder: false,
     };
 
     if (editingOrder) {
@@ -167,9 +192,29 @@ const OrderListPage = () => {
             sx={{ mb: 3 }}
           >
             <Typography variant="h4">Мої замовлення</Typography>
-            <Button variant="contained" onClick={handleCreateClick}>
-              Створити замовлення
-            </Button>
+            <Box
+              display="flex"
+              gap={2}
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              {currentUser?.isBeneficiaries && (
+                <Button
+                  variant="contained"
+                  onClick={handleBeneficiaryOrderClick}
+                  disabled={hasBeneficiaryOrder}
+                >
+                  Пільгове харчування
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                onClick={handleCreateClick}
+                disabled={hasRegularOrder}
+              >
+                Створити замовлення
+              </Button>
+            </Box>
           </Box>
 
           {orders.length === 0 ? (
@@ -183,6 +228,7 @@ const OrderListPage = () => {
                   <TableCell>Дата</TableCell>
                   <TableCell>Страви</TableCell>
                   <TableCell>Сума</TableCell>
+                  <TableCell>Тип</TableCell>
                   <TableCell>Дії</TableCell>
                 </TableRow>
               </TableHead>
@@ -195,18 +241,35 @@ const OrderListPage = () => {
                     <TableCell>
                       {order.items.map((item) => (
                         <div key={item.dishId}>
-                          {item.dishName} — {item.quantity} шт.
+                          {item.dishName} - {item.quantity} шт.
                         </div>
                       ))}
                     </TableCell>
                     <TableCell>{order.total} грн</TableCell>
                     <TableCell>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleEditClick(order)}
-                      >
-                        Редагувати
-                      </Button>
+                      {order.isBeneficiaryOrder ? (
+                        <Alert severity="info" icon={false} variant="outlined">
+                          Пільгове
+                        </Alert>
+                      ) : (
+                        <Alert
+                          severity="success"
+                          icon={false}
+                          variant="outlined"
+                        >
+                          Звичайне
+                        </Alert>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {!order.isBeneficiaryOrder && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleEditClick(order)}
+                        >
+                          Редагувати
+                        </Button>
+                      )}
                       <Button
                         variant="outlined"
                         color="error"
@@ -232,6 +295,7 @@ const OrderListPage = () => {
             handleQuantityChange={handleQuantityChange}
             handleSubmit={handleSubmit}
             orderError={orderError}
+            currentUser={currentUser}
           />
         </>
       )}

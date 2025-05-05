@@ -31,7 +31,7 @@ export const deleteOrder = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await api.delete(`/orders/${id}`);
-      return response.data;
+      return response.data._id; // Повертаємо ID для видалення з локального стану
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -87,7 +87,7 @@ const orderSlice = createSlice({
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders.push(action.payload); // Додаємо нове замовлення в масив
+        state.orders.push(action.payload);
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;

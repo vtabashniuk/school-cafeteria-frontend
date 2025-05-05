@@ -26,6 +26,7 @@ export const CreateEditOrderForm = ({
   handleQuantityChange,
   handleSubmit,
   orderError,
+  currentUser,
 }) => {
   const renderBalanceAlert = () => {
     if (potentialBalance > 99) {
@@ -61,6 +62,11 @@ export const CreateEditOrderForm = ({
     }
   };
 
+  // Фільтруємо меню: пільговики бачать лише страви з isFreeSale: true
+  const filteredMenu = currentUser?.isBeneficiaries
+    ? todayMenu.filter((dish) => dish.isFreeSale === true)
+    : todayMenu;
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
@@ -90,10 +96,10 @@ export const CreateEditOrderForm = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {todayMenu.map(({ _id, dishName, price }) => {
+            {filteredMenu.map(({ _id, dishName, price }) => {
               const item = orderItems.find((item) => item.dishId === _id);
               const quantity = item ? item.quantity : "";
-              const sum = price * quantity;
+              const sum = price * quantity || 0;
 
               return (
                 <TableRow key={_id}>
