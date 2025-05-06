@@ -8,8 +8,10 @@ import NotFoundPage from "./pages/NotFoundPage";
 import StudentsListPage from "./pages/StudentsListPage";
 import MenuListPage from "./pages/MenuListPage";
 import OrderListPage from "./pages/OrderListPage";
-import CuratorReportsPage from "./pages/CuratorReportsPage";
+import CuratorReportLayout from "./layout/CuratorReportLayout";
+import CuratorTodayReportByGroupPage from "./pages/CuratorTodayReportByGroupPage";
 import StudentReportsPage from "./pages/StudentReportsPage";
+import CuratorTodayReportForCafeteriaPage from "./pages/CuratorTodayReportForCafeteriaPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
@@ -41,7 +43,17 @@ const router = createBrowserRouter([
           },
           {
             path: "reports",
-            element: <CuratorReportsPage />,
+            element: <CuratorReportLayout />,
+            children: [
+              {
+                path: "todayOrders",
+                element: <CuratorTodayReportByGroupPage />,
+              },
+              {
+                path: "cafeteriaReport",
+                element: <CuratorTodayReportForCafeteriaPage />,
+              },
+            ],
           },
         ],
       },

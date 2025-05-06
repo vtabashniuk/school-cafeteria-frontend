@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getOrdersByGroupForToday } from "../redux/reportSlice";
+import { getTodayOrdersByGroup } from "../redux/reportSlice";
 import {
   Box,
   Typography,
@@ -40,13 +40,13 @@ pdfMake.fonts = {
   },
 };
 
-const CuratorReportsPage = () => {
+const CuratorTodayReportByGroupPage = () => {
   const [group, setGroup] = useState("");
   const [openDialog, setOpenDialog] = useState(false); // Стан для діалогу
   const dispatch = useDispatch();
-  const { report, loading, error } = useSelector((state) => state.report);
-
-  const totalSum = report?.reduce((sum, row) => sum + row.total, 0);
+  const { todayOrdersByGroup, loading, error } = useSelector(
+    (state) => state.report
+  );
 
   // Приклад груп
   const groups = ["13", "11", "12", "14"];
@@ -62,7 +62,7 @@ const CuratorReportsPage = () => {
     }
 
     // Викликаємо action для отримання звіту
-    dispatch(getOrdersByGroupForToday(group));
+    dispatch(getTodayOrdersByGroup(group));
   };
 
   const handleOpenDialog = () => {
@@ -89,8 +89,8 @@ const CuratorReportsPage = () => {
             widths: [100, "*", "*", "*", 100],
             body: [
               ["Дата", "Прізвище", "Ім'я", "Страви", "Сума"], // Заголовки
-              ...report.map((row) => [
-                new Date(row.date).toLocaleString(),
+              ...todayOrdersByGroup?.map((row) => [
+                new Date(row.date).toLocaleDateString(),
                 row.lastName,
                 row.firstName,
                 row.dishes,
@@ -101,7 +101,8 @@ const CuratorReportsPage = () => {
                 "",
                 "",
                 "",
-                totalSum + " грн", // Загальна сума
+                todayOrdersByGroup?.reduce((sum, row) => sum + row.total, 0) +
+                  " грн", // Загальна сума
               ],
             ],
           },
@@ -166,7 +167,7 @@ const CuratorReportsPage = () => {
       )}
 
       {/* Кнопка для відкриття діалогу */}
-      {report && !loading && (
+      {todayOrdersByGroup && !loading && (
         <Box sx={{ marginTop: 3 }}>
           <Button variant="contained" onClick={handleOpenDialog} fullWidth>
             Переглянути звіт
@@ -195,7 +196,7 @@ const CuratorReportsPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {report?.map((row, index) => (
+                {todayOrdersByGroup?.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>{new Date(row.date).toLocaleString()}</TableCell>
                     <TableCell>{row.lastName}</TableCell>
@@ -213,7 +214,11 @@ const CuratorReportsPage = () => {
                     </Typography>
                   </TableCell>
                   <TableCell sx={{ fontSize: "16px" }}>
-                    {totalSum} грн.
+                    {todayOrdersByGroup?.reduce(
+                      (sum, row) => sum + row.total,
+                      0
+                    )}{" "}
+                    грн.
                   </TableCell>
                 </TableRow>
               </TableFooter>
@@ -234,4 +239,4 @@ const CuratorReportsPage = () => {
   );
 };
 
-export default CuratorReportsPage;
+export default CuratorTodayReportByGroupPage;
