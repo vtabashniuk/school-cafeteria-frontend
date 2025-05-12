@@ -29,6 +29,22 @@ export const getTodayOrdersReportForCafeteriaByGroup = createAsyncThunk(
   }
 );
 
+export const fetchBalanceHistory = createAsyncThunk(
+  "report/fetchBalanceHistory",
+  async ({ userId, fromDate, toDate }, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/users/balance-history", {
+        params: { userId, fromDate, toDate },
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.message || "Не вдалося отримати історію балансу"
+      );
+    }
+  }
+);
+
 const reportSlice = createSlice({
   name: "report",
   initialState: {

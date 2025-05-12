@@ -2,16 +2,25 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers, resetLoading, clearError } from "../redux/userSlice";
 import useStudentBalanceAction from "../hooks/useStudentBalanceAction";
-import useUserFormAction from "../hooks/useUserFormAction";
 import useUserFilter from "../hooks/useUserFilter";
+import useUserFormAction from "../hooks/useUserFormAction";
+import useUserSetPasswordAction from "../hooks/useUserSetPasswordAction";
 import { UserFilter } from "../components/common";
-import { BalanceForm, UserForm } from "../forms";
+import { BalanceForm, SetPasswordForm, UserForm } from "../forms";
 import UsersList from "../components/UsersList";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import PersonAddTwoToneIcon from "@mui/icons-material/PersonAddTwoTone";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
+  const {
+    handleOpenSetPasswordForm,
+    handleSetPassword,
+    openSetPasswordForm,
+    setOpenSetPasswordForm,
+    selectedStudentForSetPassword,
+    setSelectedStudentForSetPassword,
+  } = useUserSetPasswordAction();
   const {
     handleOpenBalanceDialog,
     handleUpdateBalance,
@@ -79,6 +88,7 @@ const AdminDashboard = () => {
         <UsersList
           users={filteredUsers}
           onEdit={handleEdit}
+          onSetPassword={handleOpenSetPasswordForm}
           onUpdateBalance={handleOpenBalanceDialog}
         />
       )}
@@ -91,6 +101,15 @@ const AdminDashboard = () => {
         student={selectedStudent}
         onUpdateBalance={handleUpdateBalance}
       />
+      <SetPasswordForm
+        open={openSetPasswordForm}
+        onClose={() => {
+          setOpenSetPasswordForm(false);
+          setSelectedStudentForSetPassword(null);
+        }}
+        user={selectedStudentForSetPassword}
+        onSetPassword={handleSetPassword}
+      />
       <UserForm
         open={openUserForm}
         onClose={() => {
@@ -100,7 +119,6 @@ const AdminDashboard = () => {
           setSelectedUser(null);
         }}
         onSubmit={handleUserFormSubmit}
-        userRole={"curator"}
         initialData={selectedUser}
       />
     </Box>

@@ -12,6 +12,7 @@ import CuratorReportLayout from "./layout/CuratorReportLayout";
 import CuratorTodayReportByGroupPage from "./pages/CuratorTodayReportByGroupPage";
 import StudentReportsPage from "./pages/StudentReportsPage";
 import CuratorTodayReportForCafeteriaPage from "./pages/CuratorTodayReportForCafeteriaPage";
+import CuratorReportBalanceHistoryPage from "./pages/CuratorReportBalanceHistoryPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
               {
                 path: "cafeteriaReport",
                 element: <CuratorTodayReportForCafeteriaPage />,
+              },
+              {
+                path: "balance-report",
+                element: <CuratorReportBalanceHistoryPage />,
               },
             ],
           },

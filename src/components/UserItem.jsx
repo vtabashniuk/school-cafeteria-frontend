@@ -49,7 +49,7 @@ const UserItem = ({ user, onEdit, onSetPassword, onUpdateBalance }) => {
           textAlign: "center",
         }}
       >
-        {user.group}
+        {user.role === "curator" ? user.groups.join("\n") : user.group}
       </TableCell>
       <TableCell
         sx={{

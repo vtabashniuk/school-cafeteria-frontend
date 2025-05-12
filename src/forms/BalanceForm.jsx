@@ -50,12 +50,18 @@ export const BalanceForm = ({ open, onClose, student, onUpdateBalance }) => {
       return;
     }
     const updatedBalance = student.balance + newBalance;
+    const reason =
+      newBalance < 0 ? "Видача коштів учню" : "Поповнення балансу учнем";
 
     try {
-      const response = await onUpdateBalance(student._id, updatedBalance);
+      const response = await onUpdateBalance(
+        student._id,
+        updatedBalance,
+        reason
+      );
 
       if (response.status !== 200) {
-        setError(response.data.message);
+        setError(response);
         setIsLoading(false);
         return;
       }

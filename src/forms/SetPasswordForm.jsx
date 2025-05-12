@@ -36,7 +36,7 @@ export const SetPasswordForm = ({ open, onClose, user, onSetPassword }) => {
     try {
       const response = await onSetPassword(user._id, newPassword);
       if (response.status !== 200) {
-        setError(response.data.message);
+        setError(response);
         setIsLoading(false);
         return;
       }

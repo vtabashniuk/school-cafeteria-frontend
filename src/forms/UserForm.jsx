@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { groups } from "../constants/groups";
 import {
   Alert,
   Button,
@@ -7,25 +9,27 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
   Switch,
   TextField,
 } from "@mui/material";
 
-export const UserForm = ({
-  open,
-  onClose,
-  onSubmit,
-  userRole,
-  initialData,
-}) => {
+export const UserForm = ({ open, onClose, onSubmit, initialData }) => {
+  const currentUser = useSelector((state) => state.user.currentUser);
+
   const [formData, setFormData] = useState({
     lastName: "",
     firstName: "",
     login: "",
     password: "",
-    role: userRole,
+    role: currentUser?.role === "curator" ? "student" : "",
     group: "",
+    groups: [], // для куратора
     balance: 0,
     isBeneficiaries: false,
     isActive: true,
@@ -35,29 +39,52 @@ export const UserForm = ({
 
   useEffect(() => {
     if (initialData) {
-      setFormData({ ...initialData, password: "" });
+      setFormData({
+        ...initialData,
+        password: "",
+        groups:
+          initialData.role === "student"
+            ? []
+            : [...(initialData.groups || [])].sort(),
+      });
     } else {
       setFormData({
         lastName: "",
         firstName: "",
         login: "",
         password: "",
-        role: userRole,
+        role: currentUser.role === "curator" ? "student" : "",
         group: "",
+        groups: [],
         balance: 0,
         isBeneficiaries: false,
         isActive: true,
       });
     }
     setError(""); // Очищаємо помилку при відкритті
-  }, [initialData, open, userRole]); // <-- Додано open, щоб очищати поля при відкритті форми
+  }, [initialData, open, currentUser?.role]); // <-- Додано open, щоб очищати поля при відкритті форми
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Якщо це Checkbox, оновлюємо значення через checked
-    if (type === "checkbox") {
-      setFormData({ ...formData, [name]: checked });
+    //обробка вибору груп
+    if (
+      name === "groups" &&
+      type === "checkbox" &&
+      formData.role === "curator"
+    ) {
+      const updatedGroups = checked
+        ? [...formData.groups, value]
+        : formData.groups.filter((group) => group !== value);
+      setFormData({
+        ...formData,
+        groups: updatedGroups.sort(), // Сортуємо за алфавітом
+      });
+    } else if (type === "checkbox" || type === "switch") {
+      setFormData({
+        ...formData,
+        [name]: checked,
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -117,6 +144,27 @@ export const UserForm = ({
             {error}
           </Alert>
         )}
+        {currentUser.role === "admin" && (
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="userRoleSelection">Роль</InputLabel>
+            <Select
+              id="userRoleSelect"
+              input={<OutlinedInput label="Роль" />}
+              labelId="userRoleSelection"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+            >
+              <MenuItem key={1} value={"curator"}>
+                Куратор
+              </MenuItem>
+              <MenuItem key={2} value={"student"}>
+                Учень
+              </MenuItem>
+            </Select>
+          </FormControl>
+        )}
         <TextField
           autoComplete="off"
           fullWidth
@@ -164,41 +212,102 @@ export const UserForm = ({
             disabled={isLoading}
           />
         )}
-        <TextField
-          autoComplete="off"
-          fullWidth
-          label="Група"
-          margin="dense"
-          name="group"
-          onChange={handleChange}
-          required
-          value={formData.group}
-          disabled={isLoading}
-        />
-        <TextField
-          autoComplete="off"
-          fullWidth
-          label="Баланс"
-          margin="dense"
-          name="balance"
-          type="number"
-          value={formData.balance}
-          required
-          onChange={handleChange}
-          disabled={isLoading}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.isBeneficiaries}
-              name="isBeneficiaries"
+        {/* вибір кількох груп для куратора */}
+        {currentUser.role === "admin" && formData.role === "curator" && (
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="groupSelectionsLabel">Групи</InputLabel>
+            <Select
+              id="groupSelect"
+              input={<OutlinedInput label="Групи" />}
+              labelId="groupSelectionsLabel"
+              multiple
+              name="groups"
+              value={formData.groups}
               onChange={handleChange}
+              renderValue={(selected) => selected.join(", ")}
+              required
+            >
+              {groups.map((group) => (
+                <MenuItem key={group} value={group}>
+                  <Checkbox checked={formData.groups.indexOf(group) > -1} />
+                  {group}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {/* вибір однієї групи для учня */}
+        {currentUser.role === "admin" && formData.role === "student" && (
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="studentGroupSelection">Група</InputLabel>
+            <Select
+              id="studentGroupSelect"
+              input={<OutlinedInput label="Група" />}
+              labelId="studentGroupSelection"
+              name="group"
+              value={formData.group}
+              onChange={handleChange}
+              required
+            >
+              {groups.map((groupItem) => (
+                <MenuItem key={groupItem} value={groupItem}>
+                  {groupItem}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {currentUser.role === "curator" && (
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="studentGroupSelection">Група</InputLabel>
+            <Select
+              id="studentGroupSelect"
+              input={<OutlinedInput label="Група" />}
+              labelId="studentGroupSelection"
+              name="group"
+              value={formData.group}
+              onChange={handleChange}
+              required
+            >
+              {currentUser.groups.map((groupItem) => (
+                <MenuItem key={groupItem} value={groupItem}>
+                  {groupItem}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {((currentUser.role === "admin" && formData.role === "student") ||
+          currentUser.role === "curator") && (
+          <>
+            <TextField
+              autoComplete="off"
+              fullWidth
+              label="Баланс"
+              margin="dense"
+              name="balance"
+              type="number"
+              value={formData.balance}
+              required
+              onChange={handleChange}
+              disabled={isLoading}
             />
-          }
-          label="Пільговик"
-          labelPlacement="start"
-          disabled={isLoading}
-        />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.isBeneficiaries}
+                  name="isBeneficiaries"
+                  onChange={handleChange}
+                />
+              }
+              label="Пільговик"
+              labelPlacement="start"
+              margin="dense"
+              sx={{ mr: 2 }}
+              disabled={isLoading || formData.role === "curator"}
+            />
+          </>
+        )}
         <FormControlLabel
           control={
             <Switch

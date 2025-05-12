@@ -16,6 +16,21 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
+// Отримання користувачів певної групм
+export const fetchStudentsByGroup = createAsyncThunk(
+  "users/fetchStudentsByGroup",
+  async (group, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/users", {
+        params: { group },
+      });
+      return res.data.filter((user) => user.role === "student");
+    } catch (error) {
+      return rejectWithValue(error.message || "Не вдалося завантажити учнів");
+    }
+  }
+);
+
 //Отримання даних поточного користувача
 export const getMe = createAsyncThunk(
   "users/getMe",
@@ -49,10 +64,11 @@ export const addUser = createAsyncThunk(
 //оновлення балансу
 export const updateBalance = createAsyncThunk(
   "user/updateBalance",
-  async ({ id, newBalance }, { rejectWithValue }) => {
+  async ({ id, newBalance, reason }, { rejectWithValue }) => {
     try {
       const response = await api.put(`/users/${id}/updatebalance`, {
         newBalance,
+        reason,
       });
       return { data: response.data, status: response.status };
     } catch (error) {
@@ -130,6 +146,7 @@ export const deleteUser = createAsyncThunk(
 
 const initialState = {
   currentUser: null,
+  groups: [],
   list: [],
   loading: false,
   error: null,
@@ -169,6 +186,18 @@ const userSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchStudentsByGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchStudentsByGroup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload;
+      })
+      .addCase(fetchStudentsByGroup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

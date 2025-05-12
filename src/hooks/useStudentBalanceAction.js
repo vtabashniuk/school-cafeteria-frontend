@@ -11,10 +11,10 @@ const useStudentBalanceAction = () => {
     setOpenBalanceDialog(true);
     setSelectedStudent(user);
   };
-  const handleUpdateBalance = async (id, newBalance) => {
+  const handleUpdateBalance = async (id, newBalance, reason) => {
     try {
       const response = await dispatch(
-        updateBalance({ id, newBalance })
+        updateBalance({ id, newBalance, reason })
       ).unwrap();
       await dispatch(fetchUsers()).unwrap();
       setSelectedStudent(null);

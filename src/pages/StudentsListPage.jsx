@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../redux/userSlice";
 import useUserSetPasswordAction from "../hooks/useUserSetPasswordAction";
@@ -8,7 +8,16 @@ import useUserFormAction from "../hooks/useUserFormAction";
 import { BalanceForm, SetPasswordForm, UserForm } from "../forms";
 import UsersList from "../components/UsersList";
 import { UserFilter } from "../components/common";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 
 const StudentsListPage = () => {
   const dispatch = useDispatch();
@@ -40,6 +49,11 @@ const StudentsListPage = () => {
 
   const users = useSelector((state) => state.user.list || []);
   const loading = useSelector((state) => state.user.loading || false);
+  const { groups } = useSelector((state) => state.user.currentUser);
+  // Стан для обраної групи
+  const [selectedGroup, setSelectedGroup] = useState(
+    groups?.length === 1 ? groups[0] : "all"
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,14 +63,55 @@ const StudentsListPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Оновлення обраної групи при зміні groups
+  useEffect(() => {
+    if (groups?.length === 1) {
+      setSelectedGroup(groups[0]);
+    } else if (!groups?.includes(selectedGroup) && selectedGroup !== "all") {
+      setSelectedGroup("all"); // Скидаємо, якщо обрана група більше не в списку
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groups]);
+
+  // Обробка зміни обраної групи
+  const handleGroupChange = (event) => {
+    setSelectedGroup(event.target.value);
+  };
+
+  // Фільтрація учнів
   const filteredUsers = users.filter(
     (student) =>
       student.role === "student" &&
-      student.lastName?.toLowerCase().includes(filter.toLowerCase())
+      student.lastName?.toLowerCase().includes(filter.toLowerCase()) &&
+      (selectedGroup === "all"
+        ? groups.includes(student.group)
+        : student.group === selectedGroup) // Фільтр за групою
   );
 
   return (
     <Box sx={{ padding: 2 }}>
+      {groups?.length > 1 && (
+        <FormControl fullWidth margin="dense" sx={{ mb: 2 }}>
+          <InputLabel id="groupSelection">Група</InputLabel>
+          <Select
+            id="groupSelect"
+            labelId="groupSelection"
+            value={selectedGroup}
+            onChange={handleGroupChange}
+            renderValue={(value) => (value === "all" ? "Усі групи" : value)}
+            label="Група"
+          >
+            <MenuItem value="all">
+              <em>Усі групи</em>
+            </MenuItem>
+            {groups.map((group) => (
+              <MenuItem key={group} value={group}>
+                {group}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
       <UserFilter filter={filter} onChange={handleFilterChange} />
       <Box
         sx={{
@@ -87,8 +142,8 @@ const StudentsListPage = () => {
       ) : (
         <UsersList
           users={filteredUsers}
-            onEdit={handleEdit}
-            onSetPassword={handleOpenSetPasswordForm}
+          onEdit={handleEdit}
+          onSetPassword={handleOpenSetPasswordForm}
           onUpdateBalance={handleOpenBalanceDialog}
         />
       )}
@@ -117,7 +172,6 @@ const StudentsListPage = () => {
           setSelectedUser(null);
         }}
         onSubmit={handleUserFormSubmit}
-        userRole={"student"}
         initialData={selectedUser}
       />
     </Box>
