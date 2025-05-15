@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTodayOrdersByGroup } from "../redux/reportSlice";
+import { clearReportData, getTodayOrdersByGroup } from "../redux/reportSlice";
+import { reportDateFormatting } from "../utils/reportDateFormatting";
 import {
   Box,
   Typography,
@@ -23,11 +24,12 @@ import {
   TableRow,
   TableFooter,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 
-// Додаємо шрифт Helvetica до pdfMake
-pdfMake.addVirtualFileSystem(pdfFonts);
+// Додаємо шрифт Roboto до pdfMake
+pdfMake.vfs = pdfFonts;
 pdfMake.fonts = {
   Roboto: {
     normal:
@@ -41,28 +43,31 @@ pdfMake.fonts = {
 };
 
 const CuratorTodayReportByGroupPage = () => {
-  const [group, setGroup] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState("");
   const [openDialog, setOpenDialog] = useState(false); // Стан для діалогу
   const dispatch = useDispatch();
   const { todayOrdersByGroup, loading, error } = useSelector(
     (state) => state.report
   );
+  const { groups } = useSelector((state) => state.user.currentUser);
+  const theme = useTheme();
 
-  // Приклад груп
-  const groups = ["13", "11", "12", "14"];
+  const { reportDateLabel, reportDate } =
+    reportDateFormatting(todayOrdersByGroup);
 
   const handleGroupChange = (event) => {
-    setGroup(event.target.value);
+    dispatch(clearReportData());
+    setSelectedGroup(event.target.value);
   };
 
   const handleCreateReport = () => {
-    if (!group) {
+    if (!selectedGroup) {
       alert("Будь ласка, виберіть групу");
       return;
     }
 
     // Викликаємо action для отримання звіту
-    dispatch(getTodayOrdersByGroup(group));
+    dispatch(getTodayOrdersByGroup(selectedGroup));
   };
 
   const handleOpenDialog = () => {
@@ -73,36 +78,99 @@ const CuratorTodayReportByGroupPage = () => {
     setOpenDialog(false);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = (theme) => {
+    const primaryColor = theme.palette.primary.main;
+
     const docDefinition = {
       content: [
         {
-          text: `Звіт по групі: ${group}`,
-          font: "Roboto",
-          fontSize: 18,
+          text: `Замовлені страви учнів групи: ${selectedGroup} на ${reportDate}`,
+          alignment: "center",
           bold: true, // Використовуємо жирний шрифт
+          fontSize: 16,
           margin: [0, 0, 0, 20],
         },
         {
           style: "tableExample",
           table: {
-            widths: [100, "*", "*", "*", 100],
+            widths: [80, 100, "*", "*", 80],
             body: [
-              ["Дата", "Прізвище", "Ім'я", "Страви", "Сума"], // Заголовки
+              [
+                {
+                  text: "Дата",
+                  alignment: "center",
+                  bold: true,
+                },
+                {
+                  text: "Учень",
+                  alignment: "center",
+                  bold: true,
+                },
+                {
+                  text: "Страви",
+                  alignment: "center",
+                  bold: true,
+                  colSpan: 2,
+                },
+                "",
+                { text: "Сума", alignment: "center", bold: true },
+              ], // Заголовки
               ...todayOrdersByGroup?.map((row) => [
-                new Date(row.date).toLocaleDateString(),
-                row.lastName,
-                row.firstName,
-                row.dishes,
-                row.total + " грн",
+                { text: row.date, style: "cellPadding" },
+                {
+                  text: `${row.lastName}\n${row.firstName}`,
+                },
+                {
+                  ...(row.dishes !== ""
+                    ? {
+                        ul: row.dishes.split(";").map((dish) => ({
+                          text: dish.trim(),
+                          fontSize: 10,
+                          margin: [0, 2, 0, 2],
+                        })),
+                      }
+                    : {
+                        text: "Пільгове замовлення",
+                        color: "#03a9f4",
+                        fontSize: 10,
+                        margin: [0, 2, 0, 2],
+                      }),
+                  colSpan: 2,
+                  alignment: "left",
+                },
+                "",
+                {
+                  text: `${row.total} грн.`,
+                  alignment: "right",
+                  style: "cellPadding",
+                },
               ]),
               [
-                { text: "Всього", colSpan: 4, alignment: "right", bold: true },
+                {
+                  text: "Разом:",
+                  bold: true,
+                  color: primaryColor,
+                  colSpan: 3,
+                  fontSize: 18,
+                  style: "cellPadding",
+                  marginTop: 10,
+                },
                 "",
                 "",
+                {
+                  text: `${todayOrdersByGroup?.reduce(
+                    (sum, row) => sum + row.total,
+                    0
+                  )} грн.`, // Загальна сума
+                  alignment: "right",
+                  bold: true,
+                  color: primaryColor,
+                  colSpan: 2,
+                  fontSize: 18,
+                  style: "cellPadding",
+                  marginTop: 10,
+                },
                 "",
-                todayOrdersByGroup?.reduce((sum, row) => sum + row.total, 0) +
-                  " грн", // Загальна сума
               ],
             ],
           },
@@ -113,13 +181,16 @@ const CuratorTodayReportByGroupPage = () => {
         font: "Roboto", // Встановлюємо шрифт за замовчуванням
       },
       styles: {
-        boldText: { font: "Roboto", bold: true }, // Шрифт з жирним стилем
-        normalText: { font: "Roboto" }, // Нормальний шрифт
+        cellPadding: {
+          margin: [5, 0, 10, 0], // Імітація padding через margin
+        },
       },
     };
 
     // Генеруємо і завантажуємо PDF
-    pdfMake.createPdf(docDefinition).download(`report_group_${group}.pdf`);
+    pdfMake
+      .createPdf(docDefinition)
+      .download(`report_group_${selectedGroup}_${reportDateLabel}.pdf`);
   };
 
   return (
@@ -128,29 +199,40 @@ const CuratorTodayReportByGroupPage = () => {
         Звіт по групі на поточну дату
       </Typography>
 
-      <FormControl fullWidth sx={{ marginBottom: 2 }}>
-        <InputLabel>Оберіть групу</InputLabel>
-        <Select
-          value={group}
-          label="Оберіть групу"
-          onChange={handleGroupChange}
-        >
-          {groups.map((groupName, index) => (
-            <MenuItem key={index} value={groupName}>
-              {groupName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      {groups.length > 0 && (
+        <FormControl fullWidth margin="dense" sx={{ marginBottom: 2 }}>
+          <InputLabel id="groupSelection">Оберіть групу</InputLabel>
+          <Select
+            id="groupSelect"
+            labelId="groupSelection"
+            value={selectedGroup}
+            label="Оберіть групу"
+            onChange={handleGroupChange}
+          >
+            {groups.map((groupName) => (
+              <MenuItem key={groupName} value={groupName}>
+                {groupName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
 
       <Button
         variant="contained"
         color="primary"
         onClick={handleCreateReport}
         fullWidth
+        disabled={groups?.length === 0 || !selectedGroup}
       >
         Створити
       </Button>
+
+      {groups?.length === 0 && (
+        <Alert severity="warning" sx={{ marginTop: 2 }}>
+          Групи відсутні. Будь ласка, додайте групи до вашого профілю.
+        </Alert>
+      )}
 
       {/* Показуємо індикатор завантаження */}
       {loading && (
@@ -182,15 +264,14 @@ const CuratorTodayReportByGroupPage = () => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>Звіт по групі: {group}</DialogTitle>
+        <DialogTitle>Замовлені страви учнів групи: {selectedGroup}</DialogTitle>
         <DialogContent>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Дата</TableCell>
-                  <TableCell>Прізвище</TableCell>
-                  <TableCell>Ім'я</TableCell>
+                  <TableCell>Прізвище Ім'я</TableCell>
                   <TableCell>Страви</TableCell>
                   <TableCell>Загальна сума</TableCell>
                 </TableRow>
@@ -198,27 +279,33 @@ const CuratorTodayReportByGroupPage = () => {
               <TableBody>
                 {todayOrdersByGroup?.map((row, index) => (
                   <TableRow key={index}>
-                    <TableCell>{new Date(row.date).toLocaleString()}</TableCell>
-                    <TableCell>{row.lastName}</TableCell>
-                    <TableCell>{row.firstName}</TableCell>
-                    <TableCell>{row.dishes}</TableCell>
-                    <TableCell>{row.total} грн</TableCell>
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>
+                      {row.lastName}
+                      <br />
+                      {row.firstName}
+                    </TableCell>
+                    <TableCell>
+                      {row.dishes !== "" ? row.dishes : "Пільгове замовлення"}
+                    </TableCell>
+                    <TableCell align="right">{`${row.total} грн.`}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={4} align="right">
+                  <TableCell colSpan={3} align="right">
                     <Typography variant="h6" color="secondary">
                       Всього
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "16px" }}>
-                    {todayOrdersByGroup?.reduce(
-                      (sum, row) => sum + row.total,
-                      0
-                    )}{" "}
-                    грн.
+                  <TableCell align="right">
+                    <Typography variant="h6" color="secondary">
+                      {`${todayOrdersByGroup?.reduce(
+                        (sum, row) => sum + row.total,
+                        0
+                      )} грн.`}
+                    </Typography>
                   </TableCell>
                 </TableRow>
               </TableFooter>
@@ -230,7 +317,7 @@ const CuratorTodayReportByGroupPage = () => {
             Закрити
           </Button>
           {/* Кнопка для завантаження PDF */}
-          <Button onClick={handleDownloadPDF} color="secondary">
+          <Button onClick={() => handleDownloadPDF(theme)} color="secondary">
             Завантажити як PDF
           </Button>
         </DialogActions>

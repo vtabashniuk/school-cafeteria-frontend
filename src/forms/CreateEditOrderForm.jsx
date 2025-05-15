@@ -72,7 +72,7 @@ export const CreateEditOrderForm = ({
       <DialogTitle>
         {mode === "edit" ? "Редагувати замовлення" : "Створити замовлення"}
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent>
         {orderError && (
           <Typography color="error" sx={{ mb: 2 }}>
             {orderError}
