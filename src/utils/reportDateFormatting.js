@@ -3,16 +3,23 @@ const dateFlip = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-export const reportDateFormatting = (report) => {
-  const reportDateLabel = report?.date
-    ? dateFlip(report.date)
-    : new Date().toISOString().split("T")[0];
-  const reportDate = report?.date
-    ? report.date
-    : new Date().toLocaleDateString();
+export const reportDateFormatting = (reportData) => {
+  if (!reportData) {
+    return { reportDateLabel: "", reportDate: "" };
+  }
 
-  return {
-    reportDateLabel,
-    reportDate,
-  };
+  if (reportData.dateRange) {
+    // Звіт за період
+    const [start, end] = reportData.dateRange;
+    const startDate = start;
+    const endDate = end;
+    const label = `${dateFlip(startDate)}_${dateFlip(endDate)}`;
+    const display = `${startDate} - ${endDate}`;
+    return { reportDateLabel: label, reportDate: display };
+  }
+
+  // Звіт за поточну дату
+  const date = reportData.date;
+  const label = dateFlip(date);
+  return { reportDateLabel: label, reportDate: date };
 };

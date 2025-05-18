@@ -16,13 +16,15 @@ const CuratorReportLayout = () => {
     <>
       <Typography>Звіти куратора</Typography>
       <Box>
-        <Button onClick={() => handleNavigation("cafeteriaReport")}>
+        <Button onClick={() => handleNavigation("cafeteria-today-report")}>
           Реєстр для їдальні
+        </Button>
+        <Button onClick={() => handleNavigation("cafeteria-period-report")}>
+          Реєстр для їдальні за період
         </Button>
         <Button onClick={() => handleNavigation("todayOrders")}>
           Реєстр замовлень за поточну дату
         </Button>
-        <Button>Реєстр замовлень за період</Button>
         <Button onClick={() => handleNavigation("balance-report")}>
           Звіт по балансам
         </Button>

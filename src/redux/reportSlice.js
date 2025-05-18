@@ -29,6 +29,20 @@ export const getTodayOrdersReportForCafeteriaByGroup = createAsyncThunk(
   }
 );
 
+export const getPeriodOrdersReportForCafeteriaByGroup = createAsyncThunk(
+  "report/getPeriodOrdersReportForCafeteriaByGroup",
+  async ({ group, fromDate, toDate }, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/reports/period-report-for-cafeteria", {
+        params: { group, fromDate, toDate },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const fetchBalanceHistory = createAsyncThunk(
   "report/fetchBalanceHistory",
   async ({ userId, fromDate, toDate }, { rejectWithValue }) => {
@@ -50,13 +64,15 @@ const reportSlice = createSlice({
   initialState: {
     todayOrdersByGroup: null,
     todayOrdersReportForCafeteria: null,
+    periodOrdersReportForCafeteria: null,
     loading: false,
     error: null,
   },
   reducers: {
     clearReportData: (state) => {
       state.todayOrdersByGroup = null; // Очищаємо дані
-      state.todayOrdersReportForCafeteria = null; // Очищаємо дані
+      state.todayOrdersReportForCafeteria = null;
+      state.periodOrdersReportForCafeteria = null;
     },
     clearError: (state) => {
       state.error = null;
@@ -92,6 +108,24 @@ const reportSlice = createSlice({
       )
       .addCase(
         getTodayOrdersReportForCafeteriaByGroup.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error = action.error.message;
+        }
+      )
+      .addCase(getPeriodOrdersReportForCafeteriaByGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        getPeriodOrdersReportForCafeteriaByGroup.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.periodOrdersReportForCafeteria = action.payload;
+        }
+      )
+      .addCase(
+        getPeriodOrdersReportForCafeteriaByGroup.rejected,
         (state, action) => {
           state.loading = false;
           state.error = action.error.message;
