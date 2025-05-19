@@ -192,7 +192,6 @@ const CuratorTodayReportByGroupPage = () => {
       .createPdf(docDefinition)
       .download(`report_group_${selectedGroup}_${reportDateLabel}.pdf`);
   };
-
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom align="center">
