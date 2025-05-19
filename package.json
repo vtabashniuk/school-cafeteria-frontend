@@ -2,6 +2,7 @@
   "name": "school-cafeteria-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://vtabashniuk.github.io/school-cafeteria-frontend",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -24,8 +25,10 @@
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "http://194.15.46.123:5000",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

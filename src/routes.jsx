@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
+// import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -16,7 +17,7 @@ import CuratorPeriodReportForCafeteriaPage from "./pages/CuratorPeriodReportForC
 import CuratorBalanceHistoryReportByGroupPage from "./pages/CuratorBalanceHistoryReportByGroupPage";
 import StudentReportsPage from "./pages/StudentReportsPage";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   { path: "/", element: <LoginPage /> },
   {
     path: "/admin",
