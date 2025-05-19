@@ -10,10 +10,11 @@ import MenuListPage from "./pages/MenuListPage";
 import OrderListPage from "./pages/OrderListPage";
 import CuratorReportLayout from "./layout/CuratorReportLayout";
 import CuratorTodayReportByGroupPage from "./pages/CuratorTodayReportByGroupPage";
-import StudentReportsPage from "./pages/StudentReportsPage";
+import CuratorPeriodReportByGroupPage from "./pages/CuratorPeriodReportByGroupPage";
 import CuratorTodayReportForCafeteriaPage from "./pages/CuratorTodayReportForCafeteriaPage";
 import CuratorPeriodReportForCafeteriaPage from "./pages/CuratorPeriodReportForCafeteriaPage";
 import CuratorReportBalanceHistoryPage from "./pages/CuratorReportBalanceHistoryPage";
+import StudentReportsPage from "./pages/StudentReportsPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
               {
                 path: "todayOrders",
                 element: <CuratorTodayReportByGroupPage />,
+              },
+              {
+                path: "periodOrders",
+                element: <CuratorPeriodReportByGroupPage />,
               },
               {
                 path: "balance-report",

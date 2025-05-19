@@ -25,6 +25,9 @@ const CuratorReportLayout = () => {
         <Button onClick={() => handleNavigation("todayOrders")}>
           Реєстр замовлень за поточну дату
         </Button>
+        <Button onClick={() => handleNavigation("periodOrders")}>
+          Реєстр замовлень за період
+        </Button>
         <Button onClick={() => handleNavigation("balance-report")}>
           Звіт по балансам
         </Button>

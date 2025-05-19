@@ -15,6 +15,20 @@ export const getTodayOrdersByGroup = createAsyncThunk(
   }
 );
 
+export const getPeriodOrdersReportByGroup = createAsyncThunk(
+  "report/getPeriodOrdersReportByGroup",
+  async ({ group, fromDate, toDate }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/reports/period-report-by-group`, {
+        params: { group, fromDate, toDate },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getTodayOrdersReportForCafeteriaByGroup = createAsyncThunk(
   "report/getTodayOrdersReportForCafeteriaByGroup",
   async (group, { rejectWithValue }) => {
@@ -63,6 +77,7 @@ const reportSlice = createSlice({
   name: "report",
   initialState: {
     todayOrdersByGroup: null,
+    periodOrdersByGroup: null,
     todayOrdersReportForCafeteria: null,
     periodOrdersReportForCafeteria: null,
     loading: false,
@@ -71,6 +86,7 @@ const reportSlice = createSlice({
   reducers: {
     clearReportData: (state) => {
       state.todayOrdersByGroup = null; // Очищаємо дані
+      state.periodOrdersByGroup = null;
       state.todayOrdersReportForCafeteria = null;
       state.periodOrdersReportForCafeteria = null;
     },
@@ -93,7 +109,19 @@ const reportSlice = createSlice({
       })
       .addCase(getTodayOrdersByGroup.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload.message || "Помилка запиту";
+      })
+      .addCase(getPeriodOrdersReportByGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPeriodOrdersReportByGroup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.periodOrdersByGroup = action.payload;
+      })
+      .addCase(getPeriodOrdersReportByGroup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message || "Помилка запиту";
       })
       .addCase(getTodayOrdersReportForCafeteriaByGroup.pending, (state) => {
         state.loading = true;
@@ -110,7 +138,7 @@ const reportSlice = createSlice({
         getTodayOrdersReportForCafeteriaByGroup.rejected,
         (state, action) => {
           state.loading = false;
-          state.error = action.error.message;
+          state.error = action.payload.message || "Помилка запиту";
         }
       )
       .addCase(getPeriodOrdersReportForCafeteriaByGroup.pending, (state) => {
@@ -128,7 +156,7 @@ const reportSlice = createSlice({
         getPeriodOrdersReportForCafeteriaByGroup.rejected,
         (state, action) => {
           state.loading = false;
-          state.error = action.error.message;
+          state.error = action.payload.message || "Помилка запиту";
         }
       );
   },
