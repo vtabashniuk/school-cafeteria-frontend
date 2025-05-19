@@ -57,18 +57,19 @@ export const getPeriodOrdersReportForCafeteriaByGroup = createAsyncThunk(
   }
 );
 
-export const fetchBalanceHistory = createAsyncThunk(
-  "report/fetchBalanceHistory",
-  async ({ userId, fromDate, toDate }, { rejectWithValue }) => {
+export const getBalanceHistoryReportByGroup = createAsyncThunk(
+  "report/getBalanceHistoryReportByGroup",
+  async ({ group, fromDate, toDate }, { rejectWithValue }) => {
     try {
-      const res = await api.get("/users/balance-history", {
-        params: { userId, fromDate, toDate },
-      });
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.message || "Не вдалося отримати історію балансу"
+      const response = await api.get(
+        `/reports/balance-history-report-by-group`,
+        {
+          params: { group, fromDate, toDate },
+        }
       );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -80,6 +81,7 @@ const reportSlice = createSlice({
     periodOrdersByGroup: null,
     todayOrdersReportForCafeteria: null,
     periodOrdersReportForCafeteria: null,
+    balanceHistoryByGroup: null,
     loading: false,
     error: null,
   },
@@ -89,6 +91,7 @@ const reportSlice = createSlice({
       state.periodOrdersByGroup = null;
       state.todayOrdersReportForCafeteria = null;
       state.periodOrdersReportForCafeteria = null;
+      state.balanceHistoryByGroup = null;
     },
     clearError: (state) => {
       state.error = null;
@@ -158,7 +161,19 @@ const reportSlice = createSlice({
           state.loading = false;
           state.error = action.payload.message || "Помилка запиту";
         }
-      );
+      )
+      .addCase(getBalanceHistoryReportByGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getBalanceHistoryReportByGroup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.balanceHistoryByGroup = action.payload;
+      })
+      .addCase(getBalanceHistoryReportByGroup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message || "Помилка запиту";
+      });
   },
 });
 

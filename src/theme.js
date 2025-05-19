@@ -47,6 +47,10 @@ const theme = createTheme({
       primary: "#0061F2", // Основний колір кнопок
       secondary: "#DC0000", // Додатковий колір кнопок
     },
+    balanceReport: {
+      negative: "#FF6962", // Червоний колір для негативного балансу
+      positive: "#77DD78", // Синій колір для позитивного балансу
+    }
   },
   components: {
     // Задаємо стилі для MuiTextField

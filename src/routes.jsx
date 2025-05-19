@@ -13,7 +13,7 @@ import CuratorTodayReportByGroupPage from "./pages/CuratorTodayReportByGroupPage
 import CuratorPeriodReportByGroupPage from "./pages/CuratorPeriodReportByGroupPage";
 import CuratorTodayReportForCafeteriaPage from "./pages/CuratorTodayReportForCafeteriaPage";
 import CuratorPeriodReportForCafeteriaPage from "./pages/CuratorPeriodReportForCafeteriaPage";
-import CuratorReportBalanceHistoryPage from "./pages/CuratorReportBalanceHistoryPage";
+import CuratorBalanceHistoryReportByGroupPage from "./pages/CuratorBalanceHistoryReportByGroupPage";
 import StudentReportsPage from "./pages/StudentReportsPage";
 
 const router = createBrowserRouter([
@@ -66,7 +66,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "balance-report",
-                element: <CuratorReportBalanceHistoryPage />,
+                element: <CuratorBalanceHistoryReportByGroupPage />,
               },
             ],
           },
