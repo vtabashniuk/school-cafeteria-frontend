@@ -112,7 +112,6 @@ const CuratorBalanceHistoryReportByGroupPage = () => {
   };
 
   const handleDownloadPDF = (theme) => {
-
     const docDefinition = {
       content: [
         {
@@ -123,6 +122,14 @@ const CuratorBalanceHistoryReportByGroupPage = () => {
           margin: [0, 0, 0, 20],
         },
         ...Object.keys(balanceHistoryByGroup?.balanceHistoryByDate || {})
+          .sort((a, b) => {
+            const [dayA, monthA, yearA] = a.split(".").map(Number);
+            const [dayB, monthB, yearB] = b.split(".").map(Number);
+            return (
+              new Date(yearA, monthA - 1, dayA) -
+              new Date(yearB, monthB - 1, dayB)
+            );
+          })
           .map((date) => {
             const entries = balanceHistoryByGroup.balanceHistoryByDate[date];
             return [
